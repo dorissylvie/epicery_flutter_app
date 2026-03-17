@@ -78,17 +78,16 @@ class _ClientPageState extends State<ClientPage> {
                       ),
                     ),
                     const SizedBox(width: 12),
-
                     // Infos client
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "M. ${client.nom}",
+                          "${client.sexe == "M" ? "Mr" : "Mme"} ${client.nom}",
                           style: const TextStyle(fontSize: 18),
                         ),
                         Text(
-                          client.surnom,
+                          client.adresse,
                           style: const TextStyle(color: Colors.grey),
                         ),
                       ],

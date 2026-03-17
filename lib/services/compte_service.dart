@@ -14,6 +14,11 @@ class CompteService {
     return await db.query('Compte');
   }
 
+  Future<List<Map<String, dynamic>>> getAllComptesByIClientId(int? clientId) async {
+    final db = await _dbService.database;
+    return await db.query('Compte' , where:  'client_id = ?' , whereArgs: [clientId] );
+  }
+
   Future<int> updateCompte(int id, Map<String, dynamic> data) async {
     final db = await _dbService.database;
     return await db.update('Compte', data, where: 'id = ?', whereArgs: [id]);

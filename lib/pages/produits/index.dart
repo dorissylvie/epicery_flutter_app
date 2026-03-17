@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart' ;
 import 'package:flutter_app/Models/Produit.dart' ;
+import 'package:flutter_app/pages/produits/AfficheProduit.dart';
 import 'package:flutter_app/services/produit_service.dart';
 import 'package:flutter_app/pages/produits/AjoutProduit.dart';
 class ProduitPage extends StatefulWidget {
@@ -46,6 +47,12 @@ class _ProduitPageState extends State<ProduitPage> {
         itemBuilder: (context, index) {
           final produit = produits[index];
           return GestureDetector(
+            onTap: () async{
+              final result = await Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context)=> AfficheProduit(prd : produit!)  )
+              );
+              _loadProduits();
+            },
             child: Container(
               padding: const EdgeInsets.all(12),
               margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
@@ -59,7 +66,7 @@ class _ProduitPageState extends State<ProduitPage> {
                   CircleAvatar(
                     backgroundColor: Colors.pink,
                     child: Text(
-                      produit.nom_produit[0].toUpperCase(),
+                      produit.nomProduit[0].toUpperCase(),
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -73,11 +80,11 @@ class _ProduitPageState extends State<ProduitPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${produit.nom_produit}",
+                        "${produit.nomProduit}",
                         style: const TextStyle(fontSize: 18),
                       ),
                       Text(
-                        produit.prix_unitaire.toString(),
+                        produit.prixUnitaire.toString(),
                         style: const TextStyle(color: Colors.grey),
                       ),
                     ],

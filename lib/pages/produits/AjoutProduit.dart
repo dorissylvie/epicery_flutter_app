@@ -14,14 +14,24 @@ class _AjoutProduitState extends State<AjoutProduit> {
   final _formKey = GlobalKey<FormState>();
 
   // les champs
-  final nom_produitController = TextEditingController();
-  final prix_unitaireController = TextEditingController() ;
+  final nomProduitController = TextEditingController();
+  final prixUnitaireController = TextEditingController();
+  final prixPaquetController = TextEditingController();
+
+  String selectedCtgr = '0' ;
+
+  final List<Map<String, String>> ctgrs = [
+    {"label": "BISC", "value": "0"},
+    {"label": "HUI", "value": "1"},
+  ];
+
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    nom_produitController.dispose();
-    prix_unitaireController.dispose();
+    nomProduitController.dispose();
+    prixUnitaireController.dispose();
+    prixPaquetController.dispose();
     super.dispose();
   }
   @override
@@ -29,7 +39,7 @@ class _AjoutProduitState extends State<AjoutProduit> {
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.clear), // ❌ icône croix
+            icon: const Icon(Icons.clear),
             onPressed: () {
               Navigator.of(context).pop(); // retour
             },
@@ -42,22 +52,26 @@ class _AjoutProduitState extends State<AjoutProduit> {
                 onPressed: () {
                   // Validate returns true if the form is valid, or false otherwise.
                   if (_formKey.currentState!.validate()) {
-                    Produit _new_produit = new Produit(  nom_produit: nom_produitController.text, prix_unitaire: double.parse(prix_unitaireController.text)) ;
-                    ProduitService _produit_service = new ProduitService() ;
-                    print(_new_produit.prix_unitaire);
-                    print(_new_produit.nom_produit);
-                    _produit_service.insertProduit(_new_produit.toMap());
+                    Produit newProduit = Produit(
+                      nomProduit: nomProduitController.text,
+                      prixUnitaire: double.parse(prixUnitaireController.text),
+                      prixPaquet: double.parse(prixPaquetController.text),
+                      photoProduit: '',
+                      ctgrId: int.parse(selectedCtgr),
+                    ) ;
+                    ProduitService produitService =  ProduitService() ;
+                    produitService.insertProduit(newProduit.toMap());
 
-                    // ✅ Retour à la page précédente en indiquant succès
+                    //  Retour à la page précédente en indiquant succès
                     Navigator.pop(context, true);
                   }
                 },
                 style:TextButton.styleFrom(
-                  backgroundColor: Colors.pink.shade200, // 🎨 couleur de fond
-                  foregroundColor: Colors.grey.shade800, // 📝 couleur du texte
+                  backgroundColor: Colors.pink.shade200,
+                  foregroundColor: Colors.grey.shade800,
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20), // 🔄 coins arrondis
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ) ,
                 child: Text("Enregistrer"),
@@ -72,7 +86,7 @@ class _AjoutProduitState extends State<AjoutProduit> {
             child: Column(
               children: [
                 TextFormField(
-                  controller: nom_produitController,
+                  controller: nomProduitController,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Nom du produit',
@@ -86,7 +100,7 @@ class _AjoutProduitState extends State<AjoutProduit> {
                 ),
                 SizedBox(height: 15,),
                 TextFormField(
-                  controller: prix_unitaireController,
+                  controller: prixUnitaireController,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Prix Unitaire',
@@ -100,6 +114,47 @@ class _AjoutProduitState extends State<AjoutProduit> {
                       return 'Veuillez entrer un nombre valide';
                     }
                     return null ;
+                  },
+                ),
+                SizedBox(height: 15,),
+                TextFormField(
+                  controller: prixPaquetController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Prix d\'un paquet',
+                  ),
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  validator: (value){
+                    if (value == null || value.isEmpty){
+                      return 'Veuillez renseigner le prix' ;
+                    }
+                    if (double.tryParse(value) == null) {
+                      return 'Veuillez entrer un nombre valide';
+                    }
+                    return null ;
+                  },
+                ),
+                SizedBox(height: 15,),
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Sexe',
+                  ),
+                  value: selectedCtgr,
+                  items: ctgrs.map((ctgr) => DropdownMenuItem(
+                      value : ctgr['value'] ,
+                      child : Text(ctgr['label']!)
+                  )).toList(),
+                  onChanged: (String? value){
+                    setState(() {
+                      selectedCtgr = value !;
+                    });
+                  },
+                  validator: (value){
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez choisir un sexe';
+                    }
+                    return null;
                   },
                 ),
               ],

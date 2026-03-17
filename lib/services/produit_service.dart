@@ -14,7 +14,13 @@ class ProduitService {
     return await db.query('Produit');
   }
 
-  Future<int> updateProduit(int id, Map<String, dynamic> data) async {
+  Future<List<Map<String, Object?>>> getOneProduit(int? id) async {
+    final db = await _dbService.database;
+    return await db.query('Produit' ,where: 'id = ?' , whereArgs:[id] );
+  }
+
+
+  Future<int> updateProduit(int? id, Map<String, dynamic> data) async {
     final db = await _dbService.database;
     return await db.update('Produit', data, where: 'id = ?', whereArgs: [id]);
   }

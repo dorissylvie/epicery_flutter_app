@@ -29,4 +29,5 @@ class ClientService {
     final db = await _dbService.database;
     return await db.delete('Client', where: 'id = ?', whereArgs: [id]);
   }
+
 }

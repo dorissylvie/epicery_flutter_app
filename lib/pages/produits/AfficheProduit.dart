@@ -1,50 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_app/Models/Client.dart' ;
-import 'package:flutter_app/pages/clients/AjoutClient.dart';
-import 'package:flutter_app/pages/clients/ModificationClient.dart';
-import 'package:flutter_app/services/client_service.dart';
+import 'package:flutter_app/Models/Produit.dart' ;
+import 'package:flutter_app/pages/produits/ModificationProduit.dart';
+import 'package:flutter_app/services/produit_service.dart';
 
-class AfficheClient extends StatefulWidget {
-  final Client clt;
-  const AfficheClient({super.key , required this.clt});
+class AfficheProduit extends StatefulWidget {
+  final Produit prd;
+  const AfficheProduit({super.key , required this.prd});
 
   @override
-  State<AfficheClient> createState() => _AfficheClientState();
+  State<AfficheProduit> createState() => _AfficheProduitState();
 }
 
-class _AfficheClientState extends State<AfficheClient> {
+class _AfficheProduitState extends State<AfficheProduit> {
 
-  Client? client = null ;
-  final ClientService _clientService = ClientService();
+  Produit? produit = null ;
+  final ProduitService _produitService = ProduitService();
 
   @override
   void initState() {
     super.initState();
-    _loadClient(); // Charger les données
+    _loadProduit(); // Charger les données
   }
 
-  Future<void> _loadClient() async {
-    final data = await _clientService.getOneClient(widget.clt.id);
-    // Transformation de Map → Client
-    final List<Client> loadedClients = data.map((map) => Client.fromMap(map))
+  Future<void> _loadProduit() async {
+    final data = await _produitService.getOneProduit(widget.prd.id);
+    // Transformation de Map →Produit
+    final List<Produit> loadedProduits = data.map((map) =>Produit.fromMap(map))
         .toList();
     setState(() {
-      client = loadedClients[0];
+      produit = loadedProduits[0];
     });
   }
   @override
   final double fontSize = 60;
   Widget build(BuildContext context) {
-    if (client == null) {
+    if (produit == null) {
       // ⏳ Affiche un loader pendant le chargement
       return Scaffold(
         body: Container(
           color: Colors.grey.shade200, // 🌫️ Fond gris clair
           child: const Center(
             child: CircularProgressIndicator(
-              color: Colors.pink, // Couleur personnalisée si tu veux
-              strokeWidth: 4.0,   // Épaisseur du cercle
+              color: Colors.pink, // 🎨 Couleur personnalisée si tu veux
+              strokeWidth: 4.0,   // 🔄 Épaisseur du cercle
             ),
           ),
         ),
@@ -57,15 +55,15 @@ class _AfficheClientState extends State<AfficheClient> {
             IconButton(
               onPressed: () async {
                 final result = await Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context)=> ModificationClient(client : client!) )
+                    MaterialPageRoute(builder: (context)=> ModificationProduit(produit : produit!) )
                 );
                 if (result == true) {
-                  // Rafraîchir les clients
-                     _loadClient();
+                  // ✅ Rafraîchir les produits
+                  _loadProduit();
 
-                  // Afficher message de succès
+                  // ✅ Afficher message de succès
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Client modifié avec succès')),
+                    const SnackBar(content: Text('Produit modifié avec succès')),
                   );
                 }
               },
@@ -98,7 +96,7 @@ class _AfficheClientState extends State<AfficheClient> {
                   ),
                   alignment: Alignment.center,
                   child: Text(
-                    client!.nom[0].toUpperCase(),
+                    produit!.nomProduit[0].toUpperCase(),
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -108,7 +106,7 @@ class _AfficheClientState extends State<AfficheClient> {
                 ),
                 Center(
                   child: Text(
-                    client!.surnom,
+                    produit!.nomProduit,
                     overflow: TextOverflow.ellipsis,
                     style : TextStyle(
                       fontSize: 40,
@@ -128,7 +126,7 @@ class _AfficheClientState extends State<AfficheClient> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Nom Complet",
+                              "Prix unitaire",
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.grey.shade500,
@@ -136,7 +134,7 @@ class _AfficheClientState extends State<AfficheClient> {
 
                             ),
                             Text(
-                              client!.nom,
+                              produit!.prixUnitaire.toString(),
                               style: TextStyle(
                                 fontSize: 25,
                                 color: Colors.grey.shade900,
@@ -151,51 +149,7 @@ class _AfficheClientState extends State<AfficheClient> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Sexe",
-                              style: TextStyle(
-                                color: Colors.grey.shade500,
-                              ),
-
-                            ),
-                            Text(
-                              client!.sexe,
-                              style: TextStyle(
-                                fontSize: 25,
-                                color: Colors.grey.shade900,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        margin : EdgeInsets.fromLTRB(0,0,0,25),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Téléphone",
-                              style: TextStyle(
-                                color: Colors.grey.shade500,
-                              ),
-
-                            ),
-                            Text(
-                              client!.num,
-                              style: TextStyle(
-                                fontSize: 25,
-                                color: Colors.grey.shade900,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        margin : EdgeInsets.fromLTRB(0,0,0,25),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Adresse",
+                              "Prix Paquet",
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.grey.shade500,
@@ -203,7 +157,30 @@ class _AfficheClientState extends State<AfficheClient> {
 
                             ),
                             Text(
-                              client!.adresse,
+                              produit!.prixPaquet.toString(),
+                              style: TextStyle(
+                                fontSize: 25,
+                                color: Colors.grey.shade900,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        margin : EdgeInsets.fromLTRB(0,0,0,25),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Catégorie",
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Colors.grey.shade500,
+                              ),
+
+                            ),
+                            Text(
+                              produit!.ctgrId.toString(),
                               style: TextStyle(
                                 fontSize: 25,
                                 color: Colors.grey.shade900,

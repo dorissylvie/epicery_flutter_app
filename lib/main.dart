@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/pages/accueils/index.dart';
 import 'package:flutter_app/pages/clients/index.dart';
 import 'package:flutter_app/pages/commandes/index.dart';
+import 'package:flutter_app/pages/parametres/index.dart';
 import 'package:flutter_app/pages/produits/index.dart';
 
 void main() {
@@ -42,10 +43,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0 ;
   final _pages = [
-    AccueilPage() ,
+    AccueilPage(),
     ProduitPage(),
+    CommandePage(),
     ClientPage(),
-    CommandePage()
+    ParametrePage(),
   ] ;
 
   @override
@@ -57,23 +59,21 @@ class _MyHomePageState extends State<MyHomePage> {
         onDestinationSelected:_onItemSelected,
         destinations:[
           NavigationDestination(
-              icon: Icon(Icons.home),
-              label: "Accueil"
+              icon: Icon(Icons.home_filled), label: "Accueil"
           ),
           NavigationDestination(
-            icon: Icon(Icons.shopping_bag),
-              label: "Produits"
+            icon: Icon(Icons.shopping_bag), label: "Produits"
           ),
           NavigationDestination(
-              icon: Icon(Icons.group),
-              label: "Clients"
+              icon: Icon(Icons.list_alt), label: "Commande"
           ),
           NavigationDestination(
-              icon: Icon(Icons.list_alt),
-              label: "Commande"
+              icon: Icon(Icons.group), label: "Clients"
+          ),
+          NavigationDestination(
+              icon: Icon(Icons.settings), label: "Paramètres"
           ),
         ] ,
-
       ),
     );
   }

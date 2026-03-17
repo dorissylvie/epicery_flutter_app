@@ -3,12 +3,16 @@ class Client {
   final String nom;
   final String surnom;
   final String num;
+  final String sexe ;
+  final String adresse ;
 
   Client({
     this.id,
     required this.nom,
     required this.surnom,
-    required this.num
+    required this.num ,
+    required this.sexe ,
+    required this.adresse ,
   });
 
   /// Convertir un objet Client en Map (pour SQLite)
@@ -17,6 +21,8 @@ class Client {
       'nom': nom,
       'surnom': surnom,
       'num': num,
+      'sexe' : sexe ,
+      'adresse' : adresse
     };
   }
   /// Créer un objet Client depuis un Map (résultat SQLite)
@@ -26,6 +32,8 @@ class Client {
       nom: map['nom'] as String,
       surnom: map['surnom'] as String,
       num: map['num'] as String,
+      sexe: map['sexe'] as String ,
+      adresse: map['adresse'] as String
     );
   }
 }

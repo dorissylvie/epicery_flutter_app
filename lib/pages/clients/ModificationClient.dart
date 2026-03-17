@@ -1,45 +1,59 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_app/Models/Client.dart' ;
-import 'package:flutter_app/pages/clients/AjoutClient.dart';
+import 'package:flutter_app/Models/Client.dart';
 import 'package:flutter_app/services/client_service.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class ModificationClient extends StatefulWidget {
   final Client client;
-  const ModificationClient({super.key ,required this.client });
+
+  const ModificationClient({super.key, required this.client});
 
   @override
-  State<ModificationClient> createState() => _ModificationclientState();
+  State<ModificationClient> createState() => _ModificationClientState();
 }
 
-class _ModificationclientState extends State<ModificationClient> {
-
+class _ModificationClientState extends State<ModificationClient> {
   final _formKey = GlobalKey<FormState>();
 
-  // les champs
-  var idController = TextEditingController();
-  var nomController = TextEditingController();
-  var surnomController = TextEditingController() ;
-  var numController = TextEditingController() ;
+  // Champs texte
+  final nomController = TextEditingController();
+  final surnomController = TextEditingController();
+  final adresseController = TextEditingController();
+  String selectedSexe = 'M' ;
 
+  PhoneNumber? _currentPhoneNumber;
+
+  final List<Map<String, String>> sexes = [
+    {"label": "Masculin", "value": "M"},
+    {"label": "Féminin", "value": "F"},
+  ];
   @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    idController.dispose();
-    nomController.dispose();
-    surnomController.dispose();
-    numController.dispose();
-    super.dispose();
-  }
-
   void initState() {
     super.initState();
 
-    // ✅ Initialisation avec les valeurs du client
-    idController =  TextEditingController(text: widget.client.id.toString());
-    nomController = TextEditingController(text: widget.client.nom);
-    surnomController = TextEditingController(text: widget.client.surnom);
-    numController = TextEditingController(text: widget.client.num);
+    nomController.text = widget.client.nom;
+    surnomController.text = widget.client.surnom;
+    adresseController.text = widget.client.adresse;
+    selectedSexe = widget.client.sexe ;
+
+    _initPhoneNumber();
+  }
+
+  void _initPhoneNumber() async {
+    PhoneNumber number = await PhoneNumber.getRegionInfoFromPhoneNumber(
+      widget.client.num,
+    );
+    setState(() {
+      _currentPhoneNumber = number;
+    });
+  }
+
+  @override
+  void dispose() {
+    nomController.dispose();
+    surnomController.dispose();
+    adresseController.dispose();
+    super.dispose();
   }
 
   @override
@@ -47,97 +61,134 @@ class _ModificationclientState extends State<ModificationClient> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.clear), // ❌ icône croix
+          icon: const Icon(Icons.clear),
           onPressed: () {
-            Navigator.of(context).pop(); // retour
+            Navigator.of(context).pop(); // Retour
           },
         ),
-        title: Text("modification client"),
+        title: const Text("Modification client"),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 25), //  marge droite
-            child:  TextButton(
+            padding: const EdgeInsets.only(right: 25),
+            child: TextButton(
               onPressed: () {
-                // Validate returns true if the form is valid, or false otherwise.
-                if (_formKey.currentState!.validate()) {
-                  Client _new_client = new Client( nom: nomController.text, surnom: surnomController.text, num: numController.text) ;
-                  ClientService _client_service = new ClientService();
-                  _client_service.updateClient(widget.client.id, _new_client.toMap()) ;
+                if (_formKey.currentState!.validate() && _currentPhoneNumber != null) {
+                  Client updatedClient = Client(
+                    nom: nomController.text,
+                    surnom: surnomController.text,
+                    num: _currentPhoneNumber!.phoneNumber!, // +26134...
+                    adresse: adresseController.text,
+                    sexe: selectedSexe,
+                  );
 
-                  //  Retour à la page précédente en indiquant succès
-                  Navigator.pop(context, true);
+                  ClientService clientService = ClientService();
+                  clientService.updateClient(widget.client.id, updatedClient.toMap());
+
+                  Navigator.pop(context, true); // Retour avec succès
                 }
               },
-              style:TextButton.styleFrom(
-                backgroundColor: Colors.pink.shade200, // 🎨 couleur de fond
-                foregroundColor: Colors.grey.shade800, // 📝 couleur du texte
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.pink.shade200,
+                foregroundColor: Colors.grey.shade800,
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20), // 🔄 coins arrondis
+                  borderRadius: BorderRadius.circular(20),
                 ),
-              ) ,
-              child: Text("Enregistrer"),
+              ),
+              child: const Text("Enregistrer"),
             ),
-          )
+          ),
         ],
       ),
-      body: Container(
-        padding: EdgeInsets.all(40),
+      body: Padding(
+        padding: const EdgeInsets.all(40),
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
-                controller: idController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Identifiant Client',
-                ),
-              ),
-              SizedBox(height: 15,),
               TextFormField(
                 controller: nomController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Nom complet',
                 ),
-                validator: (value){
-                  if (value == null || value.isEmpty){
-                    return 'Veuillez remplir le nom' ;
-                  }
-                  return null ;
-                },
+                validator: (value) =>
+                value == null || value.isEmpty ? 'Veuillez remplir le nom' : null,
               ),
-              SizedBox(height: 15,),
+              const SizedBox(height: 15),
               TextFormField(
                 controller: surnomController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Surnom',
                 ),
-                validator: (value){
-                  if (value == null || value.isEmpty){
-                    return 'Veuillez remplir le nom' ;
-                  }
-                  return null ;
-                },
+                validator: (value) =>
+                value == null || value.isEmpty ? 'Veuillez remplir le surnom' : null,
               ),
-              SizedBox(height: 15),
-              TextFormField(
-                controller: numController,
+              const SizedBox(height: 15),
+              if (_currentPhoneNumber != null)
+                InternationalPhoneNumberInput(
+                  initialValue: _currentPhoneNumber,
+                  onInputChanged: (PhoneNumber number) {
+                    _currentPhoneNumber = number;
+                  },
+                  selectorConfig: const SelectorConfig(
+                    selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+                    setSelectorButtonAsPrefixIcon: true,
+                    useBottomSheetSafeArea: true,
+                    leadingPadding: 10,
+                  ),
+                  formatInput: true,
+                  autoValidateMode: AutovalidateMode.onUserInteraction,
+                  inputDecoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: "Numéro de téléphone",
+                    contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 10),
+                  ),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    signed: true,
+                    decimal: false,
+                  ),
+                ),
+              if (_currentPhoneNumber == null)
+                const CircularProgressIndicator(),
+              const SizedBox(height: 15),
+              DropdownButtonFormField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Numero téléphone',
+                  labelText: 'Sexe',
                 ),
+                value: selectedSexe,
+                items: sexes.map((sexe) => DropdownMenuItem(
+                    value : sexe['value'] ,
+                    child : Text(sexe['label']!)
+                )).toList(),
+                onChanged: (value){
+                  setState(() {
+                    selectedSexe = value !;
+                  });
+                },
                 validator: (value){
-                  if (value == null || value.isEmpty){
-                    return 'Veuillez remplir le numéro téléphone' ;
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez choisir un sexe';
                   }
-                  return null ;
+                  return null;
                 },
               ),
+              const SizedBox(height: 15),
+              TextFormField(
+                controller: adresseController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Adresse',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez remplir l\'adresse';
+                  }
+                  return null;
+                },
+              ),// En attendant le chargement du numéro
             ],
           ),
         ),

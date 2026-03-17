@@ -19,11 +19,11 @@ class DatabaseService {
     // open the database
     Database database = await openDatabase(
         path,
-        version: 2,
+        version: 4,
         onCreate: _onCreate,
         onUpgrade : (db , oldVersion , newVersion) async {
-          if (oldVersion < 2) {
-            await _createProduitTable(db) ;
+          if (oldVersion < 4) {
+            await  _onCreate(db , 4 ) ;
           }
         }
     );
@@ -32,6 +32,14 @@ class DatabaseService {
 
   Future<void> _onCreate(Database db, int version) async {
     await _createClientTable(db);
+    await _createFrequenceTable(db);
+    await _createCompteTable(db) ;
+    await _createVersementTable(db);
+    await _createCommandeTable(db) ;
+    await _createCategorieTable(db);
+    await _createProduitTable(db) ;
+    await _createDetailTable(db) ;
+
     // Ajoute ici d'autres appels : await _createProductTable(db); etc.
   }
 
@@ -42,9 +50,22 @@ class DatabaseService {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       nom TEXT NOT NULL,
       surnom TEXT,
-      num TEXT
+      num TEXT NOT NULL, 
+      sexe TEXT NOT NULL,
+      adresse TEXT,
+      photo TEXT
     )
   ''');
+  }
+
+  Future<void> _createFrequenceTable(Database db) async {
+    await db.execute('''
+     CREATE TABLE Frequence (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        code_frq TEXT,
+        nom_frq TEXT
+      )
+    ''') ;
   }
 
   Future<void> _createCompteTable(Database db) async {
@@ -52,41 +73,78 @@ class DatabaseService {
     CREATE TABLE Compte (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       date_creation TEXT NOT NULL,
-      mode_paiement TEXT NOT NULL,
       statut TEXT NOT NULL,
-      reste REAL NOT NULL, 
-      FOREIGN KEY (client_id) REFERENCES Client(id)
+      client_id INTEGER,
+      frq_id INTEGER,
+      FOREIGN KEY (client_id) REFERENCES Client(id),
+      FOREIGN KEY (frq_id) REFERENCES Frequence(id)
     )
   ''');
   }
 
-  Future<void> _createCommnandeTable(Database db) async {
+  Future<void> _createVersementTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE Versement (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        montant_verser  REAL DEFAULT 0 ,
+        date_versement TEXT NOT NULL ,  
+        mode_paiement TEXT,
+        compte_id INTEGER,
+        FOREIGN KEY (compte_id) REFERENCES Compte(id)
+      )
+    ''');
+  }
+
+  Future<void> _createCommandeTable(Database db) async {
     await db.execute('''
       CREATE TABLE Commande (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        date_livraison TEXT,
-        date_paiement TEXT,
         date_commande TEXT NOT NULL,
-        total REAL NOT NULL,
-        total_paye REAL DEFAULT 0
+        type_paiement TEXT NOT NULL DEFAULT 'complet' CHECK(type_paiement IN ('complet', 'partiel', 'credit')),
+        total_a_payer REAL NOT NULL,
+        reste_a_payer REAL DEFAULT 0 , 
+        compte_id INTEGER,
+        FOREIGN KEY (compte_id) REFERENCES Compte(id)
+      )
+    ''');
+  }
+
+  Future<void> _createCategorieTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE Categorie (
+           id INTEGER PRIMARY KEY AUTOINCREMENT , 
+           code_ctgr TEXT,
+           nom_ctgr TEXT 
+      ) 
+    ''');
+  }
+
+  Future<void> _createProduitTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE Produit (
+        id INTEGER PRIMARY KEY AUTOINCREMENT , 
+        nom_produit TEXT NOT NULL,
+        prix_unitaire REAL NOT NULL,
+        prix_paquet REAL,
+        photo_produit TEXT ,  
+        ctgr_id INTEGER,
+        FOREIGN KEY (ctgr_id) REFERENCES Categorie(id)
       )
     ''');
   }
 
   Future<void> _createDetailTable(Database db) async {
     await db.execute('''
-      
+      CREATE TABLE Detail (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        quantite REAL ,
+        unite TEXT , 
+        prix_reel REAL  ,
+        commande_id INTEGER,
+        produit_id INTEGER, 
+        FOREIGN KEY (produit_id) REFERENCES Produit(id),
+        FOREIGN KEY (commande_id) REFERENCES Commande(id)
+       )
     ''');
   }
-
-  Future<void> _createProduitTable(Database db) async {
-    await db.execute('''
-        CREATE TABLE Produit (
-          id INTEGER PRIMARY KEY AUTOINCREMENT , 
-          nom_produit TEXT NOT NULL,
-          prix_unitaire REAL NOT NULL
-        )
-    ''');
-  }
-
 }
