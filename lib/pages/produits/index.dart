@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart' ;
-import 'package:flutter_app/Models/Produit.dart' ;
+import 'package:flutter/material.dart';
+import 'package:flutter_app/Models/Produit.dart';
 import 'package:flutter_app/pages/produits/AfficheProduit.dart';
 import 'package:flutter_app/services/produit_service.dart';
 import 'package:flutter_app/pages/produits/AjoutProduit.dart';
+
 class ProduitPage extends StatefulWidget {
   const ProduitPage({super.key});
 
@@ -22,22 +23,22 @@ class _ProduitPageState extends State<ProduitPage> {
 
   Future<void> _loadProduits() async {
     final data = await _produitService.getAllProduits();
-    // 🧠 Transformation de Map → Produit
-    final List<Produit> loadedProduits = data.map((map) => Produit.fromMap(map)).toList();
+    // Transformation de Map → Produit
+    final List<Produit> loadedProduits =
+        data.map((map) => Produit.fromMap(map)).toList();
     setState(() {
       produits = loadedProduits;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Appli name") ,
-        shadowColor:  Theme.of(context).colorScheme.shadow,
+        title: const Text("Appli name"),
+        shadowColor: Theme.of(context).colorScheme.shadow,
         actions: <Widget>[
-          IconButton(
-              onPressed: (){},
-              icon: const Icon(Icons.notifications))
+          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
         ],
         backgroundColor: Colors.transparent,
       ),
@@ -47,10 +48,9 @@ class _ProduitPageState extends State<ProduitPage> {
         itemBuilder: (context, index) {
           final produit = produits[index];
           return GestureDetector(
-            onTap: () async{
-              final result = await Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context)=> AfficheProduit(prd : produit!)  )
-              );
+            onTap: () async {
+              final result = await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => AfficheProduit(prd: produit!)));
               _loadProduits();
             },
             child: Container(
@@ -58,7 +58,7 @@ class _ProduitPageState extends State<ProduitPage> {
               margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                // 👇 Pas de shadow ici
+                // Pas de shadow ici
               ),
               child: Row(
                 children: [
@@ -80,7 +80,7 @@ class _ProduitPageState extends State<ProduitPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${produit.nomProduit}",
+                        produit.nomProduit,
                         style: const TextStyle(fontSize: 18),
                       ),
                       Text(
@@ -95,23 +95,21 @@ class _ProduitPageState extends State<ProduitPage> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton (
-        onPressed:() async{
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
           final result = await Navigator.of(context).push(
-              MaterialPageRoute(builder: (context)=> const AjoutProduit() )
-          );
+              MaterialPageRoute(builder: (context) => const AjoutProduit()));
           if (result == true) {
-            // ✅ Rafraîchir les produits
             _loadProduits();
 
-            // ✅ Afficher message de succès
+            // Afficher message de succès
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Produit ajouté avec succès')),
             );
           }
-        } ,
-        child: Icon(Icons.add ),
-      )   ,
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 }
