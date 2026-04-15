@@ -39,11 +39,32 @@ class _AjoutCommandeState extends State<AjoutCommande> {
   final CommandeService cmdService = CommandeService();
   int? commandeEnCoursId;
   bool _creationCommandeEnCours = false;
+  bool _creationCompteEnCours = false;
   Produit? produitSelectionne;
+  Client? clientSelectionne;
+  Compte? compteSelectionne;
+  bool creerNouveauCompteCredit = false;
 
   // les champs pour les details de la commande
   final qteController = TextEditingController();
   final prixController = TextEditingController();
+  final montantPartielController = TextEditingController();
+
+  final List<Map<String, String>> types = [
+    {"label": "A payer intégralement", "value": "Complet"},
+    {"label": "A payer partiellement", "value": "Partiel"},
+    {"label": "A payer par crédit", "value": "Crédit"},
+  ];
+
+  String selectedType = 'Complet';
+
+  @override
+  void dispose() {
+    qteController.dispose();
+    prixController.dispose();
+    montantPartielController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -62,13 +83,116 @@ class _AjoutCommandeState extends State<AjoutCommande> {
     });
   }
 
-  Future<void> _loadComptes(id) async {
+  Future<void> _loadComptes(int? id) async {
+    if (id == null) {
+      setState(() {
+        comptes = [];
+        compteSelectionne = null;
+        creerNouveauCompteCredit = false;
+      });
+      return;
+    }
+
     final data = await cmptService.getAllComptesByIClientId(id);
     final List<Compte> loadedComptes =
         data.map((map) => Compte.fromMap(map)).toList();
     setState(() {
       comptes = loadedComptes;
+      compteSelectionne = null;
+      creerNouveauCompteCredit = loadedComptes.isEmpty;
     });
+  }
+
+  String _getTypePaiementValue() {
+    if (selectedType == 'Partiel') return 'partiel';
+    if (selectedType == 'Crédit') return 'credit';
+    return 'complet';
+  }
+
+  Future<int?> _creerNouveauCompteCredit() async {
+    final int? clientId = clientSelectionne?.id;
+    if (clientId == null || _creationCompteEnCours) {
+      return null;
+    }
+
+    _creationCompteEnCours = true;
+    try {
+      final int compteId = await cmptService.insertCompte({
+        'date_creation': DateTime.now().toIso8601String(),
+        'statut': 'actif',
+        'client_id': clientId,
+        'frq_id': null,
+      });
+      await _loadComptes(clientId);
+      return compteId;
+    } finally {
+      _creationCompteEnCours = false;
+    }
+  }
+
+  Future<void> _enregistrerCommande() async {
+    if (commandeEnCoursId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Aucune commande a enregistrer')),
+      );
+      return;
+    }
+
+    double resteAPayer = 0.0;
+    int? compteId;
+
+    if (selectedType == 'Partiel') {
+      final double? montantVerse =
+          double.tryParse(montantPartielController.text.trim());
+      if (montantVerse == null || montantVerse <= 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Veuillez renseigner un montant partiel valide'),
+          ),
+        );
+        return;
+      }
+      resteAPayer = totalAPayer - montantVerse;
+      if (resteAPayer < 0) {
+        resteAPayer = 0;
+      }
+    }
+
+    if (selectedType == 'Crédit') {
+      if (clientSelectionne == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Veuillez choisir un client')),
+        );
+        return;
+      }
+
+      if (creerNouveauCompteCredit) {
+        compteId = await _creerNouveauCompteCredit();
+      } else {
+        compteId = compteSelectionne?.id;
+      }
+
+      if (compteId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Veuillez choisir ou creer un compte de credit'),
+          ),
+        );
+        return;
+      }
+      resteAPayer = totalAPayer;
+    }
+
+    await cmdService.updateCommande(commandeEnCoursId!, {
+      'date_commande': DateTime.now().toIso8601String(),
+      'type_paiement': _getTypePaiementValue(),
+      'total_a_payer': totalAPayer,
+      'reste_a_payer': resteAPayer,
+      'compte_id': selectedType == 'Crédit' ? compteId : null,
+    });
+
+    if (!mounted) return;
+    Navigator.of(context).pop(true);
   }
 
   Future<void> _loadProduits() async {
@@ -240,13 +364,31 @@ class _AjoutCommandeState extends State<AjoutCommande> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Appli name"),
-        shadowColor: Theme.of(context).colorScheme.shadow,
-        actions: <Widget>[
-          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
-        ],
-        backgroundColor: Colors.transparent,
-      ),
+          leading: IconButton(
+            icon: const Icon(Icons.clear),
+            onPressed: () {
+              Navigator.of(context).pop(); // Retour
+            },
+          ),
+          title: const Text("Ajout commande"),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 25),
+              child: TextButton(
+                onPressed: _enregistrerCommande,
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.pink.shade200,
+                  foregroundColor: Colors.grey.shade800,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text("Enregistrer"),
+              ),
+            ),
+          ]),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -271,6 +413,9 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                 ),
                 onChanged: (value) {
                   if (value != null) {
+                    setState(() {
+                      clientSelectionne = value;
+                    });
                     _loadComptes(value.id);
                   }
                 },
@@ -598,6 +743,100 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                   ],
                 ),
               ),
+              const SizedBox(height: 10),
+              DropdownButtonFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Type de paiement',
+                    border: OutlineInputBorder(),
+                  ),
+                  value: selectedType,
+                  items: types
+                      .map((type) => DropdownMenuItem(
+                          value: type['value'], child: Text(type['label']!)))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedType = value!;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez choisir un type de paiement';
+                    }
+                    return null;
+                  }),
+              const SizedBox(height: 10),
+              if (selectedType == 'Partiel') ...[
+                TextFormField(
+                  controller: montantPartielController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Montant a payer maintenant',
+                    hintText: 'Ex: 10000',
+                  ),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                ),
+                const SizedBox(height: 10),
+              ],
+              if (selectedType == 'Crédit') ...[
+                if (clientSelectionne == null)
+                  const Text(
+                    'Choisissez d\'abord un client pour voir ses comptes.',
+                    style: TextStyle(color: Colors.black54),
+                  ),
+                if (clientSelectionne != null)
+                  SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Ajouter un nouveau compte'),
+                    subtitle: Text(
+                      comptes.isEmpty
+                          ? 'Ce client n\'a pas encore de compte.'
+                          : 'Activez si vous voulez creer un nouveau compte.',
+                    ),
+                    value: creerNouveauCompteCredit,
+                    onChanged: (value) {
+                      setState(() {
+                        creerNouveauCompteCredit = value;
+                        if (value) {
+                          compteSelectionne = null;
+                        }
+                      });
+                    },
+                  ),
+                if (clientSelectionne != null &&
+                    !creerNouveauCompteCredit &&
+                    comptes.isNotEmpty)
+                  DropdownSearch<Compte>(
+                    compareFn: (Compte a, Compte b) => a.id == b.id,
+                    selectedItem: compteSelectionne,
+                    items: (filter, infiniteScrollProps) => comptes,
+                    itemAsString: (Compte item) =>
+                        'Compte #${item.id} - ${item.statut}',
+                    decoratorProps: const DropDownDecoratorProps(
+                      decoration: InputDecoration(
+                        labelText: 'Compte credit',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    popupProps: const PopupProps.bottomSheet(
+                      fit: FlexFit.loose,
+                      constraints: BoxConstraints(),
+                      showSearchBox: false,
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        compteSelectionne = value;
+                      });
+                    },
+                  ),
+                if (clientSelectionne != null && creerNouveauCompteCredit)
+                  const Text(
+                    'Un nouveau compte sera cree a l\'enregistrement de la commande.',
+                    style: TextStyle(color: Colors.black54),
+                  ),
+                const SizedBox(height: 10),
+              ],
             ],
           ),
         ),

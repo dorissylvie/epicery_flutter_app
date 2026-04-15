@@ -82,7 +82,7 @@ class _AjoutClientState extends State<AjoutClient> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(40),
         child: Form(
           key: _formKey,
           child: Column(
