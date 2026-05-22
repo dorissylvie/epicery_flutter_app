@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/Models/Commande.dart';
 import 'package:flutter_app/services/commande_service.dart';
 import 'package:flutter_app/pages/commandes/AjoutCommande.dart';
+import 'package:flutter_app/pages/commandes/AfficheCommande.dart';
 
 class CommandePage extends StatefulWidget {
   const CommandePage({super.key});
@@ -47,8 +48,9 @@ class _CommandePageState extends State<CommandePage> {
         itemBuilder: (context, index) {
           final commande = commandes[index];
           return GestureDetector(
-            onTap: () {
-              // Handle tap event
+            onTap: () async {
+              final result = await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => AfficheCommande(cmd: commande!)));
             },
             child: Container(
               padding: const EdgeInsets.all(12),

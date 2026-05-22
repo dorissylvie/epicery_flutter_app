@@ -23,4 +23,9 @@ class CommandeService {
     final db = await _dbService.database;
     return await db.delete('Commande', where: 'id = ?', whereArgs: [id]);
   }
+
+   Future<List<Map<String, Object?>>> getOneCommande(int? id) async {
+    final db = await _dbService.database;
+    return await db.query('Commande', where: 'id = ?', whereArgs: [id]);
+  }
 }

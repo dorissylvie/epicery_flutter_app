@@ -11,6 +11,55 @@ import 'package:flutter_app/services/compte_service.dart';
 import 'package:flutter_app/services/produit_service.dart';
 import 'package:flutter_app/services/detail_service.dart';
 
+// ─── Design tokens ────────────────────────────────────────────────────────────
+class _C {
+  static const bg = Color(0xFFFAF9F8);
+  static const surface = Colors.white;
+  static const border = Color(0xFFE8E4E0);
+  static const accent = Color(0xFFD4607A);
+  static const accentSoft = Color(0xFFFCEEF1);
+  static const textPrimary = Color(0xFF1A1714);
+  static const textSecondary = Color(0xFF6B6560);
+  static const danger = Color(0xFFD64545);
+  static const tableHeader = Color(0xFFF5F0ED);
+}
+
+InputDecoration _fieldDecor(String label, {String? hint}) => InputDecoration(
+      labelText: label,
+      hintText: hint,
+      labelStyle: const TextStyle(color: _C.textSecondary, fontSize: 13),
+      hintStyle: const TextStyle(color: _C.textSecondary, fontSize: 13),
+      filled: true,
+      fillColor: _C.surface,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: _C.border),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: _C.border),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: _C.accent, width: 1.5),
+      ),
+    );
+
+Widget _sectionLabel(String text) => Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        text.toUpperCase(),
+        style: const TextStyle(
+          fontSize: 10.5,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.1,
+          color: _C.textSecondary,
+        ),
+      ),
+    );
+// ──────────────────────────────────────────────────────────────────────────────
+
 class AjoutCommande extends StatefulWidget {
   const AjoutCommande({super.key});
 
@@ -45,15 +94,14 @@ class _AjoutCommandeState extends State<AjoutCommande> {
   Compte? compteSelectionne;
   bool creerNouveauCompteCredit = false;
 
-  // les champs pour les details de la commande
   final qteController = TextEditingController();
   final prixController = TextEditingController();
   final montantPartielController = TextEditingController();
 
   final List<Map<String, String>> types = [
-    {"label": "A payer intégralement", "value": "Complet"},
-    {"label": "A payer partiellement", "value": "Partiel"},
-    {"label": "A payer par crédit", "value": "Crédit"},
+    {"label": "Paiement intégral", "value": "Complet"},
+    {"label": "Paiement partiel", "value": "Partiel"},
+    {"label": "Paiement par crédit", "value": "Crédit"},
   ];
 
   String selectedType = 'Complet';
@@ -70,12 +118,11 @@ class _AjoutCommandeState extends State<AjoutCommande> {
   void initState() {
     super.initState();
     _loadClients();
-    _loadProduits(); // charge les données dès le démarrage
+    _loadProduits();
   }
 
   Future<void> _loadClients() async {
     final data = await _clientService.getAllClients();
-    // Transformation de Map → Client
     final List<Client> loadedClients =
         data.map((map) => Client.fromMap(map)).toList();
     setState(() {
@@ -92,7 +139,6 @@ class _AjoutCommandeState extends State<AjoutCommande> {
       });
       return;
     }
-
     final data = await cmptService.getAllComptesByIClientId(id);
     final List<Compte> loadedComptes =
         data.map((map) => Compte.fromMap(map)).toList();
@@ -111,10 +157,7 @@ class _AjoutCommandeState extends State<AjoutCommande> {
 
   Future<int?> _creerNouveauCompteCredit() async {
     final int? clientId = clientSelectionne?.id;
-    if (clientId == null || _creationCompteEnCours) {
-      return null;
-    }
-
+    if (clientId == null || _creationCompteEnCours) return null;
     _creationCompteEnCours = true;
     try {
       final int compteId = await cmptService.insertCompte({
@@ -133,7 +176,7 @@ class _AjoutCommandeState extends State<AjoutCommande> {
   Future<void> _enregistrerCommande() async {
     if (commandeEnCoursId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Aucune commande a enregistrer')),
+        const SnackBar(content: Text('Aucune commande à enregistrer')),
       );
       return;
     }
@@ -147,15 +190,12 @@ class _AjoutCommandeState extends State<AjoutCommande> {
       if (montantVerse == null || montantVerse <= 0) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Veuillez renseigner un montant partiel valide'),
-          ),
+              content: Text('Veuillez renseigner un montant partiel valide')),
         );
         return;
       }
       resteAPayer = totalAPayer - montantVerse;
-      if (resteAPayer < 0) {
-        resteAPayer = 0;
-      }
+      if (resteAPayer < 0) resteAPayer = 0;
     }
 
     if (selectedType == 'Crédit') {
@@ -165,18 +205,15 @@ class _AjoutCommandeState extends State<AjoutCommande> {
         );
         return;
       }
-
       if (creerNouveauCompteCredit) {
         compteId = await _creerNouveauCompteCredit();
       } else {
         compteId = compteSelectionne?.id;
       }
-
       if (compteId == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Veuillez choisir ou creer un compte de credit'),
-          ),
+              content: Text('Veuillez choisir ou créer un compte de crédit')),
         );
         return;
       }
@@ -197,7 +234,6 @@ class _AjoutCommandeState extends State<AjoutCommande> {
 
   Future<void> _loadProduits() async {
     final data = await _produitService.getAllProduits();
-    //  Transformation de Map → Client
     final List<Produit> loadedProduits =
         data.map((map) => Produit.fromMap(map)).toList();
     setState(() {
@@ -206,10 +242,7 @@ class _AjoutCommandeState extends State<AjoutCommande> {
   }
 
   Future<void> _creerCommande({int? compteId}) async {
-    if (commandeEnCoursId != null || _creationCommandeEnCours) {
-      return;
-    }
-
+    if (commandeEnCoursId != null || _creationCommandeEnCours) return;
     _creationCommandeEnCours = true;
     final commande = Commande(
       dateCommande: DateTime.now(),
@@ -218,7 +251,6 @@ class _AjoutCommandeState extends State<AjoutCommande> {
       resteAPayer: 0.0,
       compteId: compteId,
     );
-
     try {
       final id = await cmdService.insertCommande(commande.toMap());
       if (!mounted) return;
@@ -232,10 +264,7 @@ class _AjoutCommandeState extends State<AjoutCommande> {
   }
 
   Future<void> _loadDetails() async {
-    if (commandeEnCoursId == null) {
-      return;
-    }
-
+    if (commandeEnCoursId == null) return;
     final data =
         await detailService.getAllDetailsByCommandeId(commandeEnCoursId!);
     final List<Detail> loadedDetails =
@@ -247,16 +276,12 @@ class _AjoutCommandeState extends State<AjoutCommande> {
 
   double get totalAPayer {
     return details.fold(
-      0.0,
-      (sum, detail) => sum + (detail.quantite * detail.prixReel),
-    );
+        0.0, (sum, detail) => sum + (detail.quantite * detail.prixReel));
   }
 
   String _getNomProduitById(int produitId) {
     for (final produit in produits) {
-      if (produit.id == produitId) {
-        return produit.nomProduit;
-      }
+      if (produit.id == produitId) return produit.nomProduit;
     }
     return 'Produit #$produitId';
   }
@@ -267,13 +292,12 @@ class _AjoutCommandeState extends State<AjoutCommande> {
     await _loadDetails();
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Detail supprime')),
+      const SnackBar(content: Text('Détail supprimé')),
     );
   }
 
   Future<void> _modifierDetail(Detail detail) async {
     if (detail.id == null) return;
-
     final qteEditController =
         TextEditingController(text: detail.quantite.toString());
     final prixEditController =
@@ -283,7 +307,12 @@ class _AjoutCommandeState extends State<AjoutCommande> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Modifier detail'),
+          backgroundColor: _C.surface,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text('Modifier le détail',
+              style: TextStyle(
+                  fontWeight: FontWeight.w600, color: _C.textPrimary)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -291,23 +320,30 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                 controller: qteEditController,
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(labelText: 'Qte'),
+                decoration: _fieldDecor('Quantité'),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               TextFormField(
                 controller: prixEditController,
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(labelText: 'Prix'),
+                decoration: _fieldDecor('Prix unitaire'),
               ),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Annuler'),
+              child: const Text('Annuler',
+                  style: TextStyle(color: _C.textSecondary)),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _C.accent,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+              ),
               onPressed: () => Navigator.of(context).pop(true),
               child: const Text('Enregistrer'),
             ),
@@ -324,14 +360,13 @@ class _AjoutCommandeState extends State<AjoutCommande> {
 
     final qte = double.tryParse(qteEditController.text.trim());
     final prix = double.tryParse(prixEditController.text.trim());
-
     qteEditController.dispose();
     prixEditController.dispose();
 
     if (qte == null || prix == null) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Valeurs invalides pour qte/prix')),
+        const SnackBar(content: Text('Valeurs invalides pour qté/prix')),
       );
       return;
     }
@@ -346,16 +381,17 @@ class _AjoutCommandeState extends State<AjoutCommande> {
     await _loadDetails();
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Detail modifie')),
+      const SnackBar(content: Text('Détail modifié')),
     );
   }
 
+  // ── Build ──────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     const double headerHeight = 44;
     const double rowHeight = 52;
     const double emptyStateHeight = 96;
-    final double maxTableHeight = MediaQuery.of(context).size.height * 0.45;
+    final double maxTableHeight = MediaQuery.of(context).size.height * 0.40;
     final double rawTableHeight = details.isEmpty
         ? emptyStateHeight
         : headerHeight + 8 + (details.length * rowHeight);
@@ -363,484 +399,543 @@ class _AjoutCommandeState extends State<AjoutCommande> {
         rawTableHeight.clamp(140.0, maxTableHeight);
 
     return Scaffold(
+      backgroundColor: _C.bg,
       appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.clear),
-            onPressed: () {
-              Navigator.of(context).pop(); // Retour
-            },
+        backgroundColor: _C.surface,
+        elevation: 0,
+        shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        leading: IconButton(
+          icon: const Icon(Icons.close_rounded, color: _C.textSecondary),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          'Nouvelle commande',
+          style: TextStyle(
+            color: _C.textPrimary,
+            fontWeight: FontWeight.w600,
+            fontSize: 17,
           ),
-          title: const Text("Ajout commande"),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 25),
-              child: TextButton(
-                onPressed: _enregistrerCommande,
-                style: TextButton.styleFrom(
-                  backgroundColor: Colors.pink.shade200,
-                  foregroundColor: Colors.grey.shade800,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: const Text("Enregistrer"),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: _C.border),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: FilledButton(
+              onPressed: _enregistrerCommande,
+              style: FilledButton.styleFrom(
+                backgroundColor: _C.accent,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                textStyle: const TextStyle(
+                    fontWeight: FontWeight.w600, fontSize: 13.5),
               ),
+              child: const Text('Enregistrer'),
             ),
-          ]),
+          ),
+        ],
+      ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(12),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              DropdownSearch<Client>(
-                key: dropDownKey,
-                compareFn: (Client a, Client b) => a.id == b.id,
-                items: (filter, infiniteScrollProps) => clients,
-                itemAsString: (Client item) => item.nom,
-                decoratorProps: const DropDownDecoratorProps(
-                  decoration: InputDecoration(
-                    labelText: 'Client',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                popupProps: const PopupProps.bottomSheet(
-                  fit: FlexFit.loose,
-                  constraints: BoxConstraints(),
-                  showSearchBox: true,
-                ),
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      clientSelectionne = value;
-                    });
-                    _loadComptes(value.id);
-                  }
-                },
-              ),
-              const SizedBox(height: 12),
-              const Text("Produit"),
-              const SizedBox(height: 8),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: DropdownSearch<Produit>(
-                      key: pdtdropDownKey,
-                      compareFn: (Produit a, Produit b) => a.id == b.id,
-                      items: (filter, infiniteScrollProps) => produits,
-                      itemAsString: (Produit item) => item.nomProduit,
-                      decoratorProps: const DropDownDecoratorProps(
-                        decoration: InputDecoration(
-                          labelText: 'Produit',
-                          border: OutlineInputBorder(),
-                        ),
+              // ── Section Client ─────────────────────────────────────────────
+              _card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _sectionLabel('Client'),
+                    DropdownSearch<Client>(
+                      key: dropDownKey,
+                      compareFn: (a, b) => a.id == b.id,
+                      items: (filter, _) => clients,
+                      itemAsString: (c) => c.nom,
+                      decoratorProps: DropDownDecoratorProps(
+                        decoration: _fieldDecor('Rechercher un client…'),
                       ),
                       popupProps: const PopupProps.bottomSheet(
                         fit: FlexFit.loose,
                         constraints: BoxConstraints(),
                         showSearchBox: true,
                       ),
-                      onChanged: (Produit? value) {
-                        setState(() {
-                          produitSelectionne = value;
-                        });
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    flex: 1,
-                    child: TextFormField(
-                      controller: qteController,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Qte',
-                      ),
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez remplir la quantite';
-                        }
-                        if (double.tryParse(value) == null) {
-                          return 'Veuillez entrer un nombre valide';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    flex: 2,
-                    child: TextFormField(
-                      controller: prixController,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Prix',
-                      ),
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez remplir le prix';
-                        }
-                        if (double.tryParse(value) == null) {
-                          return 'Veuillez entrer un nombre valide';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  SizedBox(
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (commandeEnCoursId == null) {
-                          await _creerCommande();
-                          if (commandeEnCoursId == null) {
-                            if (!mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                    'Erreur lors de la creation de la commande'),
-                              ),
-                            );
-                            return;
-                          }
-                          if (!mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Commande creee (id: $commandeEnCoursId)',
-                              ),
-                            ),
-                          );
-                        }
-
-                        final int? produitId = produitSelectionne?.id;
-                        if (produitId == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Veuillez selectionner un produit'),
-                            ),
-                          );
-                          return;
-                        }
-
-                        if (pdtdropDownKey.currentState != null) {
-                          final detail = Detail(
-                            quantite: double.parse(qteController.text),
-                            prixReel: double.parse(prixController.text),
-                            unite: "unite",
-                            commandeId: commandeEnCoursId!,
-                            produitId: produitId,
-                          );
-
-                          await detailService.insertDetail(detail.toMap());
-                          await _loadDetails();
-
-                          pdtdropDownKey.currentState?.changeSelectedItem(null);
-                          setState(() {
-                            produitSelectionne = null;
-                          });
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() => clientSelectionne = value);
+                          _loadComptes(value.id);
                         }
                       },
-                      child: const Icon(Icons.add),
                     ),
-                  )
-                ],
-              ),
-              const SizedBox(height: 16),
-              const Text("Details de la commande"),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: detailsTableHeight,
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.pink.shade100,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Row(
-                          children: [
-                            Expanded(flex: 4, child: Text('Produit')),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                'Qte',
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: Text(
-                                'Prix',
-                                textAlign: TextAlign.right,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: Text(
-                                'Montant',
-                                textAlign: TextAlign.right,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: Text(
-                                'Actions',
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Expanded(
-                        child: details.isEmpty
-                            ? const Center(
-                                child:
-                                    Text('Aucun detail ajoute pour le moment'),
-                              )
-                            : ListView.builder(
-                                itemCount: details.length,
-                                itemBuilder: (context, index) {
-                                  final detail = details[index];
-                                  final montant =
-                                      detail.quantite * detail.prixReel;
-
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 6,
-                                      horizontal: 8,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          flex: 4,
-                                          child: Text(
-                                            _getNomProduitById(
-                                                detail.produitId),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 2,
-                                          child: Text(
-                                            detail.quantite.toStringAsFixed(2),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 3,
-                                          child: Text(
-                                            '${detail.prixReel.toStringAsFixed(2)} Ar',
-                                            textAlign: TextAlign.right,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 3,
-                                          child: Text(
-                                            '${montant.toStringAsFixed(2)} Ar',
-                                            textAlign: TextAlign.right,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 3,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              IconButton(
-                                                icon: const Icon(Icons.edit,
-                                                    size: 18),
-                                                padding: EdgeInsets.zero,
-                                                constraints:
-                                                    const BoxConstraints(
-                                                  minWidth: 30,
-                                                  minHeight: 30,
-                                                ),
-                                                visualDensity:
-                                                    VisualDensity.compact,
-                                                onPressed: () {
-                                                  _modifierDetail(detail);
-                                                },
-                                              ),
-                                              IconButton(
-                                                icon: const Icon(Icons.delete,
-                                                    size: 18,
-                                                    color: Colors.red),
-                                                padding: EdgeInsets.zero,
-                                                constraints:
-                                                    const BoxConstraints(
-                                                  minWidth: 30,
-                                                  minHeight: 30,
-                                                ),
-                                                visualDensity:
-                                                    VisualDensity.compact,
-                                                onPressed: () {
-                                                  _supprimerDetail(detail);
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 10),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
-                child: Row(
+
+              const SizedBox(height: 12),
+
+              // ── Section Ajout produit ──────────────────────────────────────
+              _card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Expanded(
-                      child: Text(
-                        'Total a payer',
-                        style: TextStyle(fontWeight: FontWeight.w700),
+                    _sectionLabel('Ajouter un produit'),
+                    DropdownSearch<Produit>(
+                      key: pdtdropDownKey,
+                      compareFn: (a, b) => a.id == b.id,
+                      items: (filter, _) => produits,
+                      itemAsString: (p) => p.nomProduit,
+                      decoratorProps: DropDownDecoratorProps(
+                        decoration: _fieldDecor('Rechercher un produit…'),
+                      ),
+                      popupProps: const PopupProps.bottomSheet(
+                        fit: FlexFit.loose,
+                        constraints: BoxConstraints(),
+                        showSearchBox: true,
+                      ),
+                      onChanged: (value) =>
+                          setState(() => produitSelectionne = value),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: TextFormField(
+                            controller: qteController,
+                            decoration: _fieldDecor('Quantité'),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          flex: 3,
+                          child: TextFormField(
+                            controller: prixController,
+                            decoration: _fieldDecor('Prix unitaire (Ar)'),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: FilledButton(
+                            onPressed: () async {
+                              if (commandeEnCoursId == null) {
+                                await _creerCommande();
+                                if (commandeEnCoursId == null) {
+                                  if (!mounted) return;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Erreur lors de la création de la commande')),
+                                  );
+                                  return;
+                                }
+                                if (!mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          'Commande créée (id: $commandeEnCoursId)')),
+                                );
+                              }
+
+                              final int? produitId = produitSelectionne?.id;
+                              if (produitId == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Veuillez sélectionner un produit')),
+                                );
+                                return;
+                              }
+
+                              if (pdtdropDownKey.currentState != null) {
+                                final detail = Detail(
+                                  quantite: double.parse(qteController.text),
+                                  prixReel: double.parse(prixController.text),
+                                  unite: "unite",
+                                  commandeId: commandeEnCoursId!,
+                                  produitId: produitId,
+                                );
+                                await detailService
+                                    .insertDetail(detail.toMap());
+                                await _loadDetails();
+                                pdtdropDownKey.currentState
+                                    ?.changeSelectedItem(null);
+                                qteController.clear();
+                                prixController.clear();
+                                setState(() => produitSelectionne = null);
+                              }
+                            },
+                            style: FilledButton.styleFrom(
+                              backgroundColor: _C.accent,
+                              padding: EdgeInsets.zero,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                            ),
+                            child: const Icon(Icons.add_rounded,
+                                color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // ── Section Détails ────────────────────────────────────────────
+              _card(
+                padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+                      child: Row(
+                        children: [
+                          _sectionLabel('Détails de la commande'),
+                          const Spacer(),
+                          if (details.isNotEmpty)
+                            Text(
+                              '${details.length} ligne${details.length > 1 ? 's' : ''}',
+                              style: const TextStyle(
+                                  fontSize: 12, color: _C.textSecondary),
+                            ),
+                        ],
                       ),
                     ),
-                    Text(
-                      '${totalAPayer.toStringAsFixed(2)} Ar',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+
+                    // Table header
+                    Container(
+                      color: _C.tableHeader,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
+                      child: const Row(
+                        children: [
+                          Expanded(
+                              flex: 3,
+                              child: Text('Produit', style: _tableHeaderStyle)),
+                          Expanded(
+                              flex: 2,
+                              child: Text('Qté',
+                                  textAlign: TextAlign.center,
+                                  style: _tableHeaderStyle)),
+                          Expanded(
+                              flex: 3,
+                              child: Text('Prix',
+                                  textAlign: TextAlign.right,
+                                  style: _tableHeaderStyle)),
+                          Expanded(
+                              flex: 3,
+                              child: Text('Montant',
+                                  textAlign: TextAlign.right,
+                                  style: _tableHeaderStyle)),
+                          Expanded(flex: 2, child: SizedBox()),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(
+                      height: detailsTableHeight,
+                      child: details.isEmpty
+                          ? const Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.receipt_long_outlined,
+                                      size: 32, color: _C.border),
+                                  SizedBox(height: 8),
+                                  Text('Aucun produit ajouté',
+                                      style: TextStyle(
+                                          color: _C.textSecondary,
+                                          fontSize: 13)),
+                                ],
+                              ),
+                            )
+                          : ListView.separated(
+                              padding: EdgeInsets.zero,
+                              itemCount: details.length,
+                              separatorBuilder: (_, __) => const Divider(
+                                  height: 1, color: _C.border, indent: 16),
+                              itemBuilder: (context, index) {
+                                final detail = details[index];
+                                final montant =
+                                    detail.quantite * detail.prixReel;
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: Text(
+                                          _getNomProduitById(detail.produitId),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                              fontSize: 13,
+                                              color: _C.textPrimary),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text(
+                                          detail.quantite.toStringAsFixed(2),
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                              fontSize: 13,
+                                              color: _C.textSecondary),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 3,
+                                        child: Text(
+                                          '${detail.prixReel.toStringAsFixed(2)} Ar',
+                                          textAlign: TextAlign.right,
+                                          style: const TextStyle(
+                                              fontSize: 13,
+                                              color: _C.textSecondary),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 3,
+                                        child: Text(
+                                          '${montant.toStringAsFixed(2)} Ar',
+                                          textAlign: TextAlign.right,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 13,
+                                            color: _C.textPrimary,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 3,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            _iconAction(
+                                              icon: Icons.edit_outlined,
+                                              color: _C.textSecondary,
+                                              onTap: () =>
+                                                  _modifierDetail(detail),
+                                            ),
+                                            _iconAction(
+                                              icon: Icons.delete_outline,
+                                              color: _C.danger,
+                                              onTap: () =>
+                                                  _supprimerDetail(detail),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+
+                    // Total row
+                    Container(
+                      decoration: const BoxDecoration(
+                        border: Border(top: BorderSide(color: _C.border)),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 14),
+                      child: Row(
+                        children: [
+                          const Text('Total à payer',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: _C.textPrimary,
+                                  fontSize: 14)),
+                          const Spacer(),
+                          Text(
+                            '${totalAPayer.toStringAsFixed(2)} Ar',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              color: _C.accent,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 10),
-              DropdownButtonFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Type de paiement',
-                    border: OutlineInputBorder(),
-                  ),
-                  value: selectedType,
-                  items: types
-                      .map((type) => DropdownMenuItem(
-                          value: type['value'], child: Text(type['label']!)))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedType = value!;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez choisir un type de paiement';
-                    }
-                    return null;
-                  }),
-              const SizedBox(height: 10),
-              if (selectedType == 'Partiel') ...[
-                TextFormField(
-                  controller: montantPartielController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Montant a payer maintenant',
-                    hintText: 'Ex: 10000',
-                  ),
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                ),
-                const SizedBox(height: 10),
-              ],
-              if (selectedType == 'Crédit') ...[
-                if (clientSelectionne == null)
-                  const Text(
-                    'Choisissez d\'abord un client pour voir ses comptes.',
-                    style: TextStyle(color: Colors.black54),
-                  ),
-                if (clientSelectionne != null)
-                  SwitchListTile.adaptive(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Ajouter un nouveau compte'),
-                    subtitle: Text(
-                      comptes.isEmpty
-                          ? 'Ce client n\'a pas encore de compte.'
-                          : 'Activez si vous voulez creer un nouveau compte.',
+
+              const SizedBox(height: 12),
+
+              // ── Section Paiement ───────────────────────────────────────────
+              _card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _sectionLabel('Mode de paiement'),
+                    DropdownButtonFormField<String>(
+                      decoration: _fieldDecor('Type de paiement'),
+                      value: selectedType,
+                      icon: const Icon(Icons.keyboard_arrow_down_rounded,
+                          color: _C.textSecondary),
+                      style:
+                          const TextStyle(color: _C.textPrimary, fontSize: 14),
+                      dropdownColor: _C.surface,
+                      items: types
+                          .map((type) => DropdownMenuItem(
+                                value: type['value'],
+                                child: Text(type['label']!),
+                              ))
+                          .toList(),
+                      onChanged: (value) =>
+                          setState(() => selectedType = value!),
                     ),
-                    value: creerNouveauCompteCredit,
-                    onChanged: (value) {
-                      setState(() {
-                        creerNouveauCompteCredit = value;
-                        if (value) {
-                          compteSelectionne = null;
-                        }
-                      });
-                    },
-                  ),
-                if (clientSelectionne != null &&
-                    !creerNouveauCompteCredit &&
-                    comptes.isNotEmpty)
-                  DropdownSearch<Compte>(
-                    compareFn: (Compte a, Compte b) => a.id == b.id,
-                    selectedItem: compteSelectionne,
-                    items: (filter, infiniteScrollProps) => comptes,
-                    itemAsString: (Compte item) =>
-                        'Compte #${item.id} - ${item.statut}',
-                    decoratorProps: const DropDownDecoratorProps(
-                      decoration: InputDecoration(
-                        labelText: 'Compte credit',
-                        border: OutlineInputBorder(),
+                    if (selectedType == 'Partiel') ...[
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: montantPartielController,
+                        decoration: _fieldDecor('Montant versé maintenant',
+                            hint: 'Ex: 10 000'),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
                       ),
-                    ),
-                    popupProps: const PopupProps.bottomSheet(
-                      fit: FlexFit.loose,
-                      constraints: BoxConstraints(),
-                      showSearchBox: false,
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        compteSelectionne = value;
-                      });
-                    },
-                  ),
-                if (clientSelectionne != null && creerNouveauCompteCredit)
-                  const Text(
-                    'Un nouveau compte sera cree a l\'enregistrement de la commande.',
-                    style: TextStyle(color: Colors.black54),
-                  ),
-                const SizedBox(height: 10),
-              ],
+                    ],
+                    if (selectedType == 'Crédit') ...[
+                      const SizedBox(height: 12),
+                      if (clientSelectionne == null)
+                        _infoBox(
+                            'Sélectionnez d\'abord un client pour voir ses comptes.'),
+                      if (clientSelectionne != null) ...[
+                        SwitchListTile.adaptive(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text('Créer un nouveau compte',
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: _C.textPrimary,
+                                  fontWeight: FontWeight.w500)),
+                          subtitle: Text(
+                            comptes.isEmpty
+                                ? 'Ce client n\'a pas encore de compte.'
+                                : 'Activez pour ouvrir un nouveau compte.',
+                            style: const TextStyle(
+                                fontSize: 12, color: _C.textSecondary),
+                          ),
+                          value: creerNouveauCompteCredit,
+                          activeColor: _C.accent,
+                          onChanged: (value) {
+                            setState(() {
+                              creerNouveauCompteCredit = value;
+                              if (value) compteSelectionne = null;
+                            });
+                          },
+                        ),
+                        if (!creerNouveauCompteCredit &&
+                            comptes.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          DropdownSearch<Compte>(
+                            compareFn: (a, b) => a.id == b.id,
+                            selectedItem: compteSelectionne,
+                            items: (filter, _) => comptes,
+                            itemAsString: (c) =>
+                                'Compte #${c.id} — ${c.statut}',
+                            decoratorProps: DropDownDecoratorProps(
+                              decoration: _fieldDecor('Compte de crédit'),
+                            ),
+                            popupProps: const PopupProps.bottomSheet(
+                              fit: FlexFit.loose,
+                              constraints: BoxConstraints(),
+                              showSearchBox: false,
+                            ),
+                            onChanged: (value) =>
+                                setState(() => compteSelectionne = value),
+                          ),
+                        ],
+                        if (creerNouveauCompteCredit)
+                          _infoBox(
+                              'Un nouveau compte sera créé à l\'enregistrement de la commande.'),
+                      ],
+                    ],
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
             ],
           ),
         ),
       ),
     );
   }
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
+const _tableHeaderStyle = TextStyle(
+  fontSize: 11,
+  fontWeight: FontWeight.w700,
+  letterSpacing: 0.4,
+  color: _C.textSecondary,
+);
+
+Widget _card({required Widget child, EdgeInsets? padding}) {
+  return Container(
+    width: double.infinity,
+    padding: padding ?? const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: _C.surface,
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: _C.border),
+    ),
+    child: child,
+  );
+}
+
+Widget _iconAction({
+  required IconData icon,
+  required Color color,
+  required VoidCallback onTap,
+}) {
+  return InkWell(
+    borderRadius: BorderRadius.circular(8),
+    onTap: onTap,
+    child: Padding(
+      padding: const EdgeInsets.all(2),
+      child: Icon(icon, size: 16, color: color),
+    ),
+  );
+}
+
+Widget _infoBox(String text) {
+  return Container(
+    margin: const EdgeInsets.only(top: 4),
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    decoration: BoxDecoration(
+      color: _C.accentSoft,
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: Row(
+      children: [
+        const Icon(Icons.info_outline_rounded, size: 15, color: _C.accent),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(text,
+              style: const TextStyle(fontSize: 12.5, color: _C.textSecondary)),
+        ),
+      ],
+    ),
+  );
 }

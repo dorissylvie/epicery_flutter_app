@@ -30,4 +30,6 @@ class CompteService {
     final db = await _dbService.database;
     return await db.delete('Compte', where: 'id = ?', whereArgs: [id]);
   }
+
+  
 }
