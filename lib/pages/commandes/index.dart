@@ -248,7 +248,9 @@ class _InfoRow extends StatelessWidget {
                 fontWeight: FontWeight.w400)),
         Text(value,
             style: const TextStyle(
-                color: AppColors.ink, fontSize: 13, fontWeight: FontWeight.w500)),
+                color: AppColors.ink,
+                fontSize: 13,
+                fontWeight: FontWeight.w500)),
       ],
     );
   }
@@ -329,8 +331,8 @@ class _EmptyState extends StatelessWidget {
           TextButton(
             onPressed: onRefresh,
             child: const Text('Actualiser',
-                style:
-                    TextStyle(color: AppColors.ink, fontWeight: FontWeight.w500)),
+                style: TextStyle(
+                    color: AppColors.ink, fontWeight: FontWeight.w500)),
           ),
         ],
       ),

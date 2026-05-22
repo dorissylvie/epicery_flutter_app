@@ -13,14 +13,15 @@ class AjoutClient extends StatefulWidget {
 
 class _AjoutClientState extends State<AjoutClient> {
   final _formKey = GlobalKey<FormState>();
-  PhoneNumber initialPhoneNumber = PhoneNumber(isoCode: 'MG'); // 🇲🇬 par défaut
+  PhoneNumber initialPhoneNumber =
+      PhoneNumber(isoCode: 'MG'); // 🇲🇬 par défaut
   PhoneNumber? _currentPhoneNumber;
 
   // Champs texte
   final nomController = TextEditingController();
   final surnomController = TextEditingController();
   final adresseController = TextEditingController();
-  String selectedSexe = 'M' ;
+  String selectedSexe = 'M';
 
   final List<Map<String, String>> sexes = [
     {"label": "Masculin", "value": "M"},
@@ -34,7 +35,6 @@ class _AjoutClientState extends State<AjoutClient> {
     adresseController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +72,8 @@ class _AjoutClientState extends State<AjoutClient> {
               style: TextButton.styleFrom(
                 backgroundColor: AppColors.accent,
                 foregroundColor: AppColors.onAccent,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -133,7 +134,8 @@ class _AjoutClientState extends State<AjoutClient> {
                 inputDecoration: const InputDecoration(
                   hintText: "Numéro de téléphone",
                   border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 10),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 16, horizontal: 10),
                 ),
                 formatInput: true,
                 autoValidateMode: AutovalidateMode.disabled,
@@ -150,16 +152,16 @@ class _AjoutClientState extends State<AjoutClient> {
                   labelText: 'Sexe',
                 ),
                 value: selectedSexe,
-                items: sexes.map((sexe) => DropdownMenuItem(
-                  value : sexe['value'] ,
-                  child : Text(sexe['label']!)
-                )).toList(),
-                onChanged: (String? value){
+                items: sexes
+                    .map((sexe) => DropdownMenuItem(
+                        value: sexe['value'], child: Text(sexe['label']!)))
+                    .toList(),
+                onChanged: (String? value) {
                   setState(() {
-                    selectedSexe = value !;
+                    selectedSexe = value!;
                   });
                 },
-                validator: (value){
+                validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez choisir un sexe';
                   }

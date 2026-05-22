@@ -43,7 +43,8 @@ class _AfficheProduitState extends State<AfficheProduit> {
       return const Scaffold(
         backgroundColor: AppColors.bg,
         body: Center(
-          child: CircularProgressIndicator(color: AppColors.ink, strokeWidth: 1.5),
+          child:
+              CircularProgressIndicator(color: AppColors.ink, strokeWidth: 1.5),
         ),
       );
     }
@@ -76,7 +77,8 @@ class _AfficheProduitState extends State<AfficheProduit> {
                   SnackBar(
                     content: const Text('Produit modifié',
                         style: TextStyle(
-                            color: AppColors.surface, fontWeight: FontWeight.w500)),
+                            color: AppColors.surface,
+                            fontWeight: FontWeight.w500)),
                     backgroundColor: AppColors.ink,
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(

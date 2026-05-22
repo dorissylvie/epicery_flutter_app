@@ -83,7 +83,8 @@ class _AfficheClientState extends State<AfficheClient> {
       return const Scaffold(
         backgroundColor: AppColors.bg,
         body: Center(
-          child: CircularProgressIndicator(color: AppColors.ink, strokeWidth: 1.5),
+          child:
+              CircularProgressIndicator(color: AppColors.ink, strokeWidth: 1.5),
         ),
       );
     }
@@ -116,7 +117,8 @@ class _AfficheClientState extends State<AfficheClient> {
                   SnackBar(
                     content: const Text('Client modifié',
                         style: TextStyle(
-                            color: AppColors.surface, fontWeight: FontWeight.w500)),
+                            color: AppColors.surface,
+                            fontWeight: FontWeight.w500)),
                     backgroundColor: AppColors.ink,
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
@@ -330,10 +332,14 @@ class _InfoTile extends StatelessWidget {
         children: [
           Text(label,
               style: const TextStyle(
-                  color: AppColors.muted, fontSize: 13, fontWeight: FontWeight.w400)),
+                  color: AppColors.muted,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400)),
           Text(value,
               style: const TextStyle(
-                  color: AppColors.ink, fontSize: 14, fontWeight: FontWeight.w600)),
+                  color: AppColors.ink,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600)),
         ],
       ),
     );
@@ -361,9 +367,8 @@ class _CompteRow extends StatelessWidget {
     // Couleur badge statut
     final bool isActif = (compte.statut?.toLowerCase() ?? 'actif') == 'actif';
     final Color badgeBg =
-      isActif ? AppColors.successSoft : AppColors.dangerSoft;
-    final Color badgeFg =
-      isActif ? AppColors.success : AppColors.danger;
+        isActif ? AppColors.successSoft : AppColors.dangerSoft;
+    final Color badgeFg = isActif ? AppColors.success : AppColors.danger;
 
     // Date formatée
     String dateStr = '—';
@@ -450,7 +455,9 @@ class _EmptyComptes extends StatelessWidget {
           const SizedBox(height: 10),
           const Text('Aucun compte',
               style: TextStyle(
-                  color: AppColors.ink, fontSize: 14, fontWeight: FontWeight.w600)),
+                  color: AppColors.ink,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
           const Text('Ce client n\'a pas encore de compte.',
               style: TextStyle(color: AppColors.muted, fontSize: 12)),

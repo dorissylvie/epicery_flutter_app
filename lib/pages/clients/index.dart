@@ -37,7 +37,8 @@ class _ClientPageState extends State<ClientPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.bg,
-        title: const Text("Clients", style: TextStyle(color: AppColors.textPrimary)),
+        title: const Text("Clients",
+            style: TextStyle(color: AppColors.textPrimary)),
         shadowColor: Theme.of(context).colorScheme.shadow,
         actions: [
           IconButton(

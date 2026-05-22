@@ -20,7 +20,7 @@ class _ModificationClientState extends State<ModificationClient> {
   final nomController = TextEditingController();
   final surnomController = TextEditingController();
   final adresseController = TextEditingController();
-  String selectedSexe = 'M' ;
+  String selectedSexe = 'M';
 
   PhoneNumber? _currentPhoneNumber;
 
@@ -35,7 +35,7 @@ class _ModificationClientState extends State<ModificationClient> {
     nomController.text = widget.client.nom;
     surnomController.text = widget.client.surnom;
     adresseController.text = widget.client.adresse;
-    selectedSexe = widget.client.sexe ;
+    selectedSexe = widget.client.sexe;
 
     _initPhoneNumber();
   }
@@ -73,7 +73,8 @@ class _ModificationClientState extends State<ModificationClient> {
             padding: const EdgeInsets.only(right: 25),
             child: TextButton(
               onPressed: () {
-                if (_formKey.currentState!.validate() && _currentPhoneNumber != null) {
+                if (_formKey.currentState!.validate() &&
+                    _currentPhoneNumber != null) {
                   Client updatedClient = Client(
                     nom: nomController.text,
                     surnom: surnomController.text,
@@ -83,7 +84,8 @@ class _ModificationClientState extends State<ModificationClient> {
                   );
 
                   ClientService clientService = ClientService();
-                  clientService.updateClient(widget.client.id, updatedClient.toMap());
+                  clientService.updateClient(
+                      widget.client.id, updatedClient.toMap());
 
                   Navigator.pop(context, true); // Retour avec succès
                 }
@@ -91,7 +93,8 @@ class _ModificationClientState extends State<ModificationClient> {
               style: TextButton.styleFrom(
                 backgroundColor: AppColors.accent,
                 foregroundColor: AppColors.onAccent,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -113,8 +116,9 @@ class _ModificationClientState extends State<ModificationClient> {
                   border: OutlineInputBorder(),
                   labelText: 'Nom complet',
                 ),
-                validator: (value) =>
-                value == null || value.isEmpty ? 'Veuillez remplir le nom' : null,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Veuillez remplir le nom'
+                    : null,
               ),
               const SizedBox(height: 15),
               TextFormField(
@@ -123,8 +127,9 @@ class _ModificationClientState extends State<ModificationClient> {
                   border: OutlineInputBorder(),
                   labelText: 'Surnom',
                 ),
-                validator: (value) =>
-                value == null || value.isEmpty ? 'Veuillez remplir le surnom' : null,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Veuillez remplir le surnom'
+                    : null,
               ),
               const SizedBox(height: 15),
               if (_currentPhoneNumber != null)
@@ -144,7 +149,8 @@ class _ModificationClientState extends State<ModificationClient> {
                   inputDecoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     hintText: "Numéro de téléphone",
-                    contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 10),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 16, horizontal: 10),
                   ),
                   keyboardType: const TextInputType.numberWithOptions(
                     signed: true,
@@ -160,16 +166,16 @@ class _ModificationClientState extends State<ModificationClient> {
                   labelText: 'Sexe',
                 ),
                 value: selectedSexe,
-                items: sexes.map((sexe) => DropdownMenuItem(
-                    value : sexe['value'] ,
-                    child : Text(sexe['label']!)
-                )).toList(),
-                onChanged: (value){
+                items: sexes
+                    .map((sexe) => DropdownMenuItem(
+                        value: sexe['value'], child: Text(sexe['label']!)))
+                    .toList(),
+                onChanged: (value) {
                   setState(() {
-                    selectedSexe = value !;
+                    selectedSexe = value!;
                   });
                 },
-                validator: (value){
+                validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez choisir un sexe';
                   }
@@ -189,7 +195,7 @@ class _ModificationClientState extends State<ModificationClient> {
                   }
                   return null;
                 },
-              ),// En attendant le chargement du numéro
+              ), // En attendant le chargement du numéro
             ],
           ),
         ),

@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart' ;
+import 'package:flutter/material.dart';
 
-import 'package:flutter_app/Models/Produit.dart' ;
+import 'package:flutter_app/Models/Produit.dart';
 import 'package:flutter_app/services/produit_service.dart';
 import 'package:flutter_app/theme/app_colors.dart';
 
@@ -19,13 +19,12 @@ class _AjoutProduitState extends State<AjoutProduit> {
   final prixUnitaireController = TextEditingController();
   final prixPaquetController = TextEditingController();
 
-  String selectedCtgr = '0' ;
+  String selectedCtgr = '0';
 
   final List<Map<String, String>> ctgrs = [
     {"label": "BISC", "value": "0"},
     {"label": "HUI", "value": "1"},
   ];
-
 
   @override
   void dispose() {
@@ -35,6 +34,7 @@ class _AjoutProduitState extends State<AjoutProduit> {
     prixPaquetController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +49,7 @@ class _AjoutProduitState extends State<AjoutProduit> {
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 25), //  marge droite
-              child:  TextButton(
+              child: TextButton(
                 onPressed: () {
                   // Validate returns true if the form is valid, or false otherwise.
                   if (_formKey.currentState!.validate()) {
@@ -59,28 +59,29 @@ class _AjoutProduitState extends State<AjoutProduit> {
                       prixPaquet: double.parse(prixPaquetController.text),
                       photoProduit: '',
                       ctgrId: int.parse(selectedCtgr),
-                    ) ;
-                    ProduitService produitService =  ProduitService() ;
+                    );
+                    ProduitService produitService = ProduitService();
                     produitService.insertProduit(newProduit.toMap());
 
                     //  Retour à la page précédente en indiquant succès
                     Navigator.pop(context, true);
                   }
                 },
-                style:TextButton.styleFrom(
+                style: TextButton.styleFrom(
                   backgroundColor: AppColors.accent,
                   foregroundColor: AppColors.onAccent,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                ) ,
+                ),
                 child: Text("Enregistrer"),
               ),
             )
           ],
         ),
-        body : Container(
+        body: Container(
           padding: EdgeInsets.all(20),
           child: Form(
             key: _formKey,
@@ -92,66 +93,74 @@ class _AjoutProduitState extends State<AjoutProduit> {
                     border: OutlineInputBorder(),
                     labelText: 'Nom du produit',
                   ),
-                  validator: (value){
-                    if (value == null || value.isEmpty){
-                      return 'Veuillez remplir le nom' ;
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez remplir le nom';
                     }
-                    return null ;
+                    return null;
                   },
                 ),
-                SizedBox(height: 15,),
+                SizedBox(
+                  height: 15,
+                ),
                 TextFormField(
                   controller: prixUnitaireController,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Prix Unitaire',
                   ),
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  validator: (value){
-                    if (value == null || value.isEmpty){
-                      return 'Veuillez remplir le nom' ;
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez remplir le nom';
                     }
                     if (double.tryParse(value) == null) {
                       return 'Veuillez entrer un nombre valide';
                     }
-                    return null ;
+                    return null;
                   },
                 ),
-                SizedBox(height: 15,),
+                SizedBox(
+                  height: 15,
+                ),
                 TextFormField(
                   controller: prixPaquetController,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Prix d\'un paquet',
                   ),
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  validator: (value){
-                    if (value == null || value.isEmpty){
-                      return 'Veuillez renseigner le prix' ;
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez renseigner le prix';
                     }
                     if (double.tryParse(value) == null) {
                       return 'Veuillez entrer un nombre valide';
                     }
-                    return null ;
+                    return null;
                   },
                 ),
-                SizedBox(height: 15,),
+                SizedBox(
+                  height: 15,
+                ),
                 DropdownButtonFormField<String>(
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Sexe',
                   ),
                   value: selectedCtgr,
-                  items: ctgrs.map((ctgr) => DropdownMenuItem(
-                      value : ctgr['value'] ,
-                      child : Text(ctgr['label']!)
-                  )).toList(),
-                  onChanged: (String? value){
+                  items: ctgrs
+                      .map((ctgr) => DropdownMenuItem(
+                          value: ctgr['value'], child: Text(ctgr['label']!)))
+                      .toList(),
+                  onChanged: (String? value) {
                     setState(() {
-                      selectedCtgr = value !;
+                      selectedCtgr = value!;
                     });
                   },
-                  validator: (value){
+                  validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Veuillez choisir un sexe';
                     }
@@ -161,7 +170,6 @@ class _AjoutProduitState extends State<AjoutProduit> {
               ],
             ),
           ),
-        )
-    ) ;
+        ));
   }
 }

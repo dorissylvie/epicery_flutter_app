@@ -63,14 +63,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0 ;
+  int _selectedIndex = 0;
   final _pages = [
     AccueilPage(),
     ProduitPage(),
     CommandePage(),
     ClientPage(),
     ParametrePage(),
-  ] ;
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -78,32 +78,24 @@ class _MyHomePageState extends State<MyHomePage> {
       body: _pages[_selectedIndex],
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
-        onDestinationSelected:_onItemSelected,
-        destinations:[
+        onDestinationSelected: _onItemSelected,
+        destinations: [
           NavigationDestination(
-              icon: Icon(Icons.home_filled), label: "Accueil"
-          ),
+              icon: Icon(Icons.home_filled), label: "Accueil"),
           NavigationDestination(
-            icon: Icon(Icons.shopping_bag), label: "Produits"
-          ),
+              icon: Icon(Icons.shopping_bag), label: "Produits"),
+          NavigationDestination(icon: Icon(Icons.list_alt), label: "Commande"),
+          NavigationDestination(icon: Icon(Icons.group), label: "Clients"),
           NavigationDestination(
-              icon: Icon(Icons.list_alt), label: "Commande"
-          ),
-          NavigationDestination(
-              icon: Icon(Icons.group), label: "Clients"
-          ),
-          NavigationDestination(
-              icon: Icon(Icons.settings), label: "Paramètres"
-          ),
-        ] ,
+              icon: Icon(Icons.settings), label: "Paramètres"),
+        ],
       ),
     );
   }
-  void _onItemSelected(int index){
+
+  void _onItemSelected(int index) {
     setState(() {
-      _selectedIndex = index ;
+      _selectedIndex = index;
     });
   }
 }
-
-

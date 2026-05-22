@@ -43,8 +43,8 @@ class _ProduitPageState extends State<ProduitPage> {
         actions: <Widget>[
           IconButton(
               onPressed: () {},
-              icon: const Icon(Icons.notifications,
-                  color: AppColors.textPrimary))
+              icon:
+                  const Icon(Icons.notifications, color: AppColors.textPrimary))
         ],
       ),
       body: ListView.builder(

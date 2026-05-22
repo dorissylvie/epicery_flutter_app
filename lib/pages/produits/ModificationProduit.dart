@@ -1,29 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/Models/Produit.dart' ;
+import 'package:flutter_app/Models/Produit.dart';
 import 'package:flutter_app/pages/produits/AjoutProduit.dart';
 import 'package:flutter_app/services/produit_service.dart';
 import 'package:flutter_app/theme/app_colors.dart';
 
 class ModificationProduit extends StatefulWidget {
   final Produit produit;
-  const ModificationProduit({super.key ,required this.produit });
+  const ModificationProduit({super.key, required this.produit});
 
   @override
   State<ModificationProduit> createState() => _ModificationproduitState();
 }
 
 class _ModificationproduitState extends State<ModificationProduit> {
-
   final _formKey = GlobalKey<FormState>();
 
   // les champs
   var idController = TextEditingController();
   var nomProduitController = TextEditingController();
-  var prixUnitaireController = TextEditingController() ;
+  var prixUnitaireController = TextEditingController();
   var prixPaquetController = TextEditingController();
 
-  String selectedCtgr = '0' ;
+  String selectedCtgr = '0';
 
   final List<Map<String, String>> ctgrs = [
     {"label": "BISC", "value": "0"},
@@ -44,11 +43,14 @@ class _ModificationproduitState extends State<ModificationProduit> {
     super.initState();
 
     // Initialisation avec les valeurs du produit
-    idController =  TextEditingController(text: widget.produit.id.toString());
-    nomProduitController = TextEditingController(text: widget.produit.nomProduit);
-    prixUnitaireController = TextEditingController(text: widget.produit.prixUnitaire.toString());
-    prixPaquetController = TextEditingController(text: widget.produit.prixPaquet.toString());
-    selectedCtgr = widget.produit.ctgrId.toString() ;
+    idController = TextEditingController(text: widget.produit.id.toString());
+    nomProduitController =
+        TextEditingController(text: widget.produit.nomProduit);
+    prixUnitaireController =
+        TextEditingController(text: widget.produit.prixUnitaire.toString());
+    prixPaquetController =
+        TextEditingController(text: widget.produit.prixPaquet.toString());
+    selectedCtgr = widget.produit.ctgrId.toString();
   }
 
   @override
@@ -65,32 +67,34 @@ class _ModificationproduitState extends State<ModificationProduit> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 25), //  marge droite
-            child:  TextButton(
+            child: TextButton(
               onPressed: () {
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
-                  Produit newProduit =  Produit(
+                  Produit newProduit = Produit(
                     nomProduit: nomProduitController.text,
-                    prixUnitaire: double.parse( prixUnitaireController.text),
+                    prixUnitaire: double.parse(prixUnitaireController.text),
                     prixPaquet: double.parse(prixPaquetController.text),
                     photoProduit: '',
                     ctgrId: int.parse(selectedCtgr),
-                  ) ;
+                  );
                   ProduitService produit_service = new ProduitService();
-                  produit_service.updateProduit(widget.produit.id, newProduit.toMap()) ;
+                  produit_service.updateProduit(
+                      widget.produit.id, newProduit.toMap());
 
                   //  Retour à la page précédente en indiquant succès
                   Navigator.pop(context, true);
                 }
               },
-              style:TextButton.styleFrom(
+              style: TextButton.styleFrom(
                 backgroundColor: AppColors.accent,
                 foregroundColor: AppColors.onAccent,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-              ) ,
+              ),
               child: Text("Enregistrer"),
             ),
           )
@@ -111,73 +115,83 @@ class _ModificationproduitState extends State<ModificationProduit> {
                   labelText: 'Identifiant Produit',
                 ),
               ),
-              SizedBox(height: 15,),
+              SizedBox(
+                height: 15,
+              ),
               TextFormField(
                 controller: nomProduitController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Nom du produit',
                 ),
-                validator: (value){
-                  if (value == null || value.isEmpty){
-                    return 'Veuillez remplir le nom' ;
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez remplir le nom';
                   }
-                  return null ;
+                  return null;
                 },
               ),
-              SizedBox(height: 15,),
+              SizedBox(
+                height: 15,
+              ),
               TextFormField(
                 controller: prixUnitaireController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Prix Unitaire',
                 ),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                validator: (value){
-                  if (value == null || value.isEmpty){
-                    return 'Veuillez remplir le nom' ;
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez remplir le nom';
                   }
                   if (double.tryParse(value) == null) {
                     return 'Veuillez entrer un nombre valide';
                   }
-                  return null ;
+                  return null;
                 },
               ),
-              SizedBox(height: 15,),
+              SizedBox(
+                height: 15,
+              ),
               TextFormField(
                 controller: prixPaquetController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Prix d\'un paquet',
                 ),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                validator: (value){
-                  if (value == null || value.isEmpty){
-                    return 'Veuillez renseigner le prix' ;
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez renseigner le prix';
                   }
                   if (double.tryParse(value) == null) {
                     return 'Veuillez entrer un nombre valide';
                   }
-                  return null ;
+                  return null;
                 },
               ),
-              SizedBox(height: 15,),
+              SizedBox(
+                height: 15,
+              ),
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Sexe',
                 ),
                 value: selectedCtgr,
-                items: ctgrs.map((ctgr) => DropdownMenuItem(
-                    value : ctgr['value'] ,
-                    child : Text(ctgr['label']!)
-                )).toList(),
-                onChanged: (String? value){
+                items: ctgrs
+                    .map((ctgr) => DropdownMenuItem(
+                        value: ctgr['value'], child: Text(ctgr['label']!)))
+                    .toList(),
+                onChanged: (String? value) {
                   setState(() {
-                    selectedCtgr = value !;
+                    selectedCtgr = value!;
                   });
                 },
-                validator: (value){
+                validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez choisir un sexe';
                   }

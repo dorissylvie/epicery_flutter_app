@@ -571,7 +571,7 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                                   borderRadius: BorderRadius.circular(10)),
                             ),
                             child: const Icon(Icons.add_rounded,
-                              color: AppColors.onAccent),
+                                color: AppColors.onAccent),
                           ),
                         ),
                       ],
@@ -655,7 +655,9 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                               padding: EdgeInsets.zero,
                               itemCount: details.length,
                               separatorBuilder: (_, __) => const Divider(
-                                  height: 1, color: AppColors.border, indent: 16),
+                                  height: 1,
+                                  color: AppColors.border,
+                                  indent: 16),
                               itemBuilder: (context, index) {
                                 final detail = details[index];
                                 final montant =
@@ -740,7 +742,8 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                     // Total row
                     Container(
                       decoration: const BoxDecoration(
-                        border: Border(top: BorderSide(color: AppColors.border)),
+                        border:
+                            Border(top: BorderSide(color: AppColors.border)),
                       ),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 14),
@@ -780,8 +783,8 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                       value: selectedType,
                       icon: const Icon(Icons.keyboard_arrow_down_rounded,
                           color: AppColors.textSecondary),
-                      style:
-                          const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                      style: const TextStyle(
+                          color: AppColors.textPrimary, fontSize: 14),
                       dropdownColor: AppColors.surface,
                       items: types
                           .map((type) => DropdownMenuItem(
@@ -917,11 +920,13 @@ Widget _infoBox(String text) {
     ),
     child: Row(
       children: [
-        const Icon(Icons.info_outline_rounded, size: 15, color: AppColors.accent),
+        const Icon(Icons.info_outline_rounded,
+            size: 15, color: AppColors.accent),
         const SizedBox(width: 8),
         Expanded(
           child: Text(text,
-              style: const TextStyle(fontSize: 12.5, color: AppColors.textSecondary)),
+              style: const TextStyle(
+                  fontSize: 12.5, color: AppColors.textSecondary)),
         ),
       ],
     ),
