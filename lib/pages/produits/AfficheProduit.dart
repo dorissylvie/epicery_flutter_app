@@ -2,15 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/Models/Produit.dart';
 import 'package:flutter_app/pages/produits/ModificationProduit.dart';
 import 'package:flutter_app/services/produit_service.dart';
-
-// ── Palette partagée ─────────────────────────────────────────────────────────
-class _C {
-  static const bg = Color(0xFFF7F7F5);
-  static const surface = Color(0xFFFFFFFF);
-  static const ink = Color(0xFF1A1A1A);
-  static const muted = Color(0xFF8C8C8C);
-  static const divider = Color(0xFFEAEAE8);
-}
+import 'package:flutter_app/theme/app_colors.dart';
 
 class AfficheProduit extends StatefulWidget {
   final Produit prd;
@@ -49,24 +41,24 @@ class _AfficheProduitState extends State<AfficheProduit> {
   Widget build(BuildContext context) {
     if (_loading) {
       return const Scaffold(
-        backgroundColor: _C.bg,
+        backgroundColor: AppColors.bg,
         body: Center(
-          child: CircularProgressIndicator(color: _C.ink, strokeWidth: 1.5),
+          child: CircularProgressIndicator(color: AppColors.ink, strokeWidth: 1.5),
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor: _C.bg,
+      backgroundColor: AppColors.bg,
 
       // ── AppBar ─────────────────────────────────────────────────────────
       appBar: AppBar(
-        backgroundColor: _C.bg,
+        backgroundColor: AppColors.bg,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded,
-              size: 18, color: _C.ink),
+              size: 18, color: AppColors.ink),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
@@ -84,8 +76,8 @@ class _AfficheProduitState extends State<AfficheProduit> {
                   SnackBar(
                     content: const Text('Produit modifié',
                         style: TextStyle(
-                            color: _C.surface, fontWeight: FontWeight.w500)),
-                    backgroundColor: _C.ink,
+                            color: AppColors.surface, fontWeight: FontWeight.w500)),
+                    backgroundColor: AppColors.ink,
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
@@ -114,14 +106,14 @@ class _AfficheProduitState extends State<AfficheProduit> {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: _C.ink,
+                  color: AppColors.ink,
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   _initiale,
                   style: const TextStyle(
-                    color: _C.surface,
+                    color: AppColors.surface,
                     fontSize: 32,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -1,
@@ -136,7 +128,7 @@ class _AfficheProduitState extends State<AfficheProduit> {
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  color: _C.ink,
+                  color: AppColors.ink,
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
                   letterSpacing: -0.5,
@@ -203,10 +195,10 @@ class _AppBarAction extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: IconButton(
-        icon: Icon(icon, color: _C.ink, size: 20),
+        icon: Icon(icon, color: AppColors.ink, size: 20),
         onPressed: onTap,
         style: IconButton.styleFrom(
-          backgroundColor: _C.surface,
+          backgroundColor: AppColors.surface,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
@@ -229,9 +221,9 @@ class _PrixChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: dark ? _C.ink : _C.surface,
+        color: dark ? AppColors.ink : AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: dark ? null : Border.all(color: _C.divider),
+        border: dark ? null : Border.all(color: AppColors.divider),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,7 +231,7 @@ class _PrixChip extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              color: dark ? Colors.white54 : _C.muted,
+              color: dark ? AppColors.onAccentMuted : AppColors.muted,
               fontSize: 11,
               fontWeight: FontWeight.w500,
               letterSpacing: 0.3,
@@ -249,7 +241,7 @@ class _PrixChip extends StatelessWidget {
           Text(
             value,
             style: TextStyle(
-              color: dark ? _C.surface : _C.ink,
+              color: dark ? AppColors.surface : AppColors.ink,
               fontSize: 18,
               fontWeight: FontWeight.w700,
               letterSpacing: -0.4,
@@ -270,9 +262,9 @@ class _Section extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: _C.surface,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _C.divider, width: 1),
+        border: Border.all(color: AppColors.divider, width: 1),
       ),
       child: child,
     );
@@ -298,10 +290,10 @@ class _InfoTile extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: _C.bg,
+              color: AppColors.bg,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, size: 17, color: _C.muted),
+            child: Icon(icon, size: 17, color: AppColors.muted),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -310,13 +302,13 @@ class _InfoTile extends StatelessWidget {
               children: [
                 Text(label,
                     style: const TextStyle(
-                        color: _C.muted,
+                        color: AppColors.muted,
                         fontSize: 11,
                         fontWeight: FontWeight.w400)),
                 const SizedBox(height: 2),
                 Text(value,
                     style: const TextStyle(
-                        color: _C.ink,
+                        color: AppColors.ink,
                         fontSize: 14,
                         fontWeight: FontWeight.w600)),
               ],

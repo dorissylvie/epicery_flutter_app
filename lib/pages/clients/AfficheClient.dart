@@ -4,16 +4,7 @@ import 'package:flutter_app/Models/Compte.dart';
 import 'package:flutter_app/pages/clients/ModificationClient.dart';
 import 'package:flutter_app/services/client_service.dart';
 import 'package:flutter_app/services/compte_service.dart';
-
-// ── Palette (cohérente avec CommandePage) ────────────────────────────────────
-class _C {
-  static const bg = Color(0xFFF7F7F5);
-  static const surface = Color(0xFFFFFFFF);
-  static const ink = Color(0xFF1A1A1A);
-  static const muted = Color(0xFF8C8C8C);
-  static const divider = Color(0xFFEAEAE8);
-  static const accent = Color(0xFF1A1A1A);
-}
+import 'package:flutter_app/theme/app_colors.dart';
 
 class AfficheClient extends StatefulWidget {
   final Client clt;
@@ -72,8 +63,8 @@ class _AfficheClientState extends State<AfficheClient> {
       SnackBar(
         content: Text('Compte #$id créé',
             style: const TextStyle(
-                color: _C.surface, fontWeight: FontWeight.w500)),
-        backgroundColor: _C.ink,
+                color: AppColors.surface, fontWeight: FontWeight.w500)),
+        backgroundColor: AppColors.ink,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -90,24 +81,24 @@ class _AfficheClientState extends State<AfficheClient> {
     // Loader plein écran pendant le premier chargement
     if (_loadingClient) {
       return const Scaffold(
-        backgroundColor: _C.bg,
+        backgroundColor: AppColors.bg,
         body: Center(
-          child: CircularProgressIndicator(color: _C.ink, strokeWidth: 1.5),
+          child: CircularProgressIndicator(color: AppColors.ink, strokeWidth: 1.5),
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor: _C.bg,
+      backgroundColor: AppColors.bg,
 
       // ── AppBar ────────────────────────────────────────────────────────────
       appBar: AppBar(
-        backgroundColor: _C.bg,
+        backgroundColor: AppColors.bg,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded,
-              size: 18, color: _C.ink),
+              size: 18, color: AppColors.ink),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
@@ -125,8 +116,8 @@ class _AfficheClientState extends State<AfficheClient> {
                   SnackBar(
                     content: const Text('Client modifié',
                         style: TextStyle(
-                            color: _C.surface, fontWeight: FontWeight.w500)),
-                    backgroundColor: _C.ink,
+                            color: AppColors.surface, fontWeight: FontWeight.w500)),
+                    backgroundColor: AppColors.ink,
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
@@ -155,14 +146,14 @@ class _AfficheClientState extends State<AfficheClient> {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: _C.ink,
+                  color: AppColors.ink,
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   _initiale,
                   style: const TextStyle(
-                    color: _C.surface,
+                    color: AppColors.surface,
                     fontSize: 32,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -1,
@@ -175,7 +166,7 @@ class _AfficheClientState extends State<AfficheClient> {
               child: Text(
                 client!.surnom,
                 style: const TextStyle(
-                  color: _C.ink,
+                  color: AppColors.ink,
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
                   letterSpacing: -0.5,
@@ -207,7 +198,7 @@ class _AfficheClientState extends State<AfficheClient> {
                   text: TextSpan(
                     text: 'Comptes ',
                     style: const TextStyle(
-                      color: _C.ink,
+                      color: AppColors.ink,
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -0.3,
@@ -216,7 +207,7 @@ class _AfficheClientState extends State<AfficheClient> {
                       TextSpan(
                         text: '(${comptes.length})',
                         style: const TextStyle(
-                          color: _C.muted,
+                          color: AppColors.muted,
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
                         ),
@@ -230,17 +221,17 @@ class _AfficheClientState extends State<AfficheClient> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
                     decoration: BoxDecoration(
-                      color: _C.ink,
+                      color: AppColors.ink,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.add, color: _C.surface, size: 15),
+                        Icon(Icons.add, color: AppColors.surface, size: 15),
                         SizedBox(width: 5),
                         Text('Nouveau compte',
                             style: TextStyle(
-                                color: _C.surface,
+                                color: AppColors.surface,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600)),
                       ],
@@ -258,7 +249,7 @@ class _AfficheClientState extends State<AfficheClient> {
                 padding: EdgeInsets.symmetric(vertical: 24),
                 child: Center(
                   child: CircularProgressIndicator(
-                      color: _C.ink, strokeWidth: 1.5),
+                      color: AppColors.ink, strokeWidth: 1.5),
                 ),
               )
             else if (comptes.isEmpty)
@@ -293,10 +284,10 @@ class _AppBarAction extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: IconButton(
-        icon: Icon(icon, color: _C.ink, size: 20),
+        icon: Icon(icon, color: AppColors.ink, size: 20),
         onPressed: onTap,
         style: IconButton.styleFrom(
-          backgroundColor: _C.surface,
+          backgroundColor: AppColors.surface,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
@@ -314,9 +305,9 @@ class _Section extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: _C.surface,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _C.divider, width: 1),
+        border: Border.all(color: AppColors.divider, width: 1),
       ),
       child: child,
     );
@@ -339,10 +330,10 @@ class _InfoTile extends StatelessWidget {
         children: [
           Text(label,
               style: const TextStyle(
-                  color: _C.muted, fontSize: 13, fontWeight: FontWeight.w400)),
+                  color: AppColors.muted, fontSize: 13, fontWeight: FontWeight.w400)),
           Text(value,
               style: const TextStyle(
-                  color: _C.ink, fontSize: 14, fontWeight: FontWeight.w600)),
+                  color: AppColors.ink, fontSize: 14, fontWeight: FontWeight.w600)),
         ],
       ),
     );
@@ -356,7 +347,7 @@ class _TileDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Divider(
-        color: _C.divider, height: 1, indent: 16, endIndent: 16);
+        color: AppColors.divider, height: 1, indent: 16, endIndent: 16);
   }
 }
 
@@ -370,9 +361,9 @@ class _CompteRow extends StatelessWidget {
     // Couleur badge statut
     final bool isActif = (compte.statut?.toLowerCase() ?? 'actif') == 'actif';
     final Color badgeBg =
-        isActif ? const Color(0xFFEAF6EE) : const Color(0xFFFAEEEA);
+      isActif ? AppColors.successSoft : AppColors.dangerSoft;
     final Color badgeFg =
-        isActif ? const Color(0xFF2D7A46) : const Color(0xFFB94A2C);
+      isActif ? AppColors.success : AppColors.danger;
 
     // Date formatée
     String dateStr = '—';
@@ -391,11 +382,11 @@ class _CompteRow extends StatelessWidget {
             width: 38,
             height: 38,
             decoration: BoxDecoration(
-              color: _C.bg,
+              color: AppColors.bg,
               borderRadius: BorderRadius.circular(9),
             ),
             child: const Icon(Icons.account_balance_wallet_outlined,
-                size: 18, color: _C.muted),
+                size: 18, color: AppColors.muted),
           ),
           const SizedBox(width: 14),
 
@@ -406,13 +397,13 @@ class _CompteRow extends StatelessWidget {
               children: [
                 Text('Compte #${compte.id}',
                     style: const TextStyle(
-                        color: _C.ink,
+                        color: AppColors.ink,
                         fontSize: 14,
                         fontWeight: FontWeight.w600)),
                 const SizedBox(height: 2),
                 Text('Créé le $dateStr',
                     style: const TextStyle(
-                        color: _C.muted,
+                        color: AppColors.muted,
                         fontSize: 11,
                         fontWeight: FontWeight.w400)),
               ],
@@ -448,33 +439,33 @@ class _EmptyComptes extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: _C.surface,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _C.divider),
+        border: Border.all(color: AppColors.divider),
       ),
       child: Column(
         children: [
           const Icon(Icons.account_balance_wallet_outlined,
-              color: _C.muted, size: 28),
+              color: AppColors.muted, size: 28),
           const SizedBox(height: 10),
           const Text('Aucun compte',
               style: TextStyle(
-                  color: _C.ink, fontSize: 14, fontWeight: FontWeight.w600)),
+                  color: AppColors.ink, fontSize: 14, fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
           const Text('Ce client n\'a pas encore de compte.',
-              style: TextStyle(color: _C.muted, fontSize: 12)),
+              style: TextStyle(color: AppColors.muted, fontSize: 12)),
           const SizedBox(height: 16),
           GestureDetector(
             onTap: onAdd,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: _C.ink,
+                color: AppColors.ink,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Text('Créer un compte',
                   style: TextStyle(
-                      color: _C.surface,
+                      color: AppColors.surface,
                       fontSize: 12,
                       fontWeight: FontWeight.w600)),
             ),

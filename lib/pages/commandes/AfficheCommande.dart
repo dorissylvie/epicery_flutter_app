@@ -5,6 +5,7 @@ import 'package:flutter_app/pages/commandes/ModificationCommande.dart';
 import 'package:flutter_app/Models/Detail.dart';
 import 'package:flutter_app/services/detail_service.dart';
 import 'package:flutter_app/services/produit_service.dart';
+import 'package:flutter_app/theme/app_colors.dart';
 
 class AfficheCommande extends StatefulWidget {
   final Commande cmd;
@@ -115,7 +116,7 @@ class _AfficheCommandeState extends State<AfficheCommande> {
                     ),
                     Text(
                       "Date: ${cmd!.dateCommande.toLocal()}",
-                      style: const TextStyle(color: Colors.grey),
+                      style: const TextStyle(color: AppColors.textSecondary),
                     ),
                   ],
                 ),

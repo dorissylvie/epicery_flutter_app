@@ -10,39 +10,27 @@ import 'package:flutter_app/services/commande_service.dart';
 import 'package:flutter_app/services/compte_service.dart';
 import 'package:flutter_app/services/produit_service.dart';
 import 'package:flutter_app/services/detail_service.dart';
-
-// ─── Design tokens ────────────────────────────────────────────────────────────
-class _C {
-  static const bg = Color(0xFFFAF9F8);
-  static const surface = Colors.white;
-  static const border = Color(0xFFE8E4E0);
-  static const accent = Color(0xFFD4607A);
-  static const accentSoft = Color(0xFFFCEEF1);
-  static const textPrimary = Color(0xFF1A1714);
-  static const textSecondary = Color(0xFF6B6560);
-  static const danger = Color(0xFFD64545);
-  static const tableHeader = Color(0xFFF5F0ED);
-}
+import 'package:flutter_app/theme/app_colors.dart';
 
 InputDecoration _fieldDecor(String label, {String? hint}) => InputDecoration(
       labelText: label,
       hintText: hint,
-      labelStyle: const TextStyle(color: _C.textSecondary, fontSize: 13),
-      hintStyle: const TextStyle(color: _C.textSecondary, fontSize: 13),
+      labelStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+      hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
       filled: true,
-      fillColor: _C.surface,
+      fillColor: AppColors.surface,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: _C.border),
+        borderSide: const BorderSide(color: AppColors.border),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: _C.border),
+        borderSide: const BorderSide(color: AppColors.border),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: _C.accent, width: 1.5),
+        borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
       ),
     );
 
@@ -54,7 +42,7 @@ Widget _sectionLabel(String text) => Padding(
           fontSize: 10.5,
           fontWeight: FontWeight.w700,
           letterSpacing: 1.1,
-          color: _C.textSecondary,
+          color: AppColors.textSecondary,
         ),
       ),
     );
@@ -307,12 +295,12 @@ class _AjoutCommandeState extends State<AjoutCommande> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: _C.surface,
+          backgroundColor: AppColors.surface,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: const Text('Modifier le détail',
               style: TextStyle(
-                  fontWeight: FontWeight.w600, color: _C.textPrimary)),
+                  fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -335,12 +323,12 @@ class _AjoutCommandeState extends State<AjoutCommande> {
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
               child: const Text('Annuler',
-                  style: TextStyle(color: _C.textSecondary)),
+                  style: TextStyle(color: AppColors.textSecondary)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: _C.accent,
-                foregroundColor: Colors.white,
+                backgroundColor: AppColors.accent,
+                foregroundColor: AppColors.onAccent,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8)),
               ),
@@ -399,27 +387,27 @@ class _AjoutCommandeState extends State<AjoutCommande> {
         rawTableHeight.clamp(140.0, maxTableHeight);
 
     return Scaffold(
-      backgroundColor: _C.bg,
+      backgroundColor: AppColors.bg,
       appBar: AppBar(
-        backgroundColor: _C.surface,
+        backgroundColor: AppColors.surface,
         elevation: 0,
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
-          icon: const Icon(Icons.close_rounded, color: _C.textSecondary),
+          icon: const Icon(Icons.close_rounded, color: AppColors.textSecondary),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
           'Nouvelle commande',
           style: TextStyle(
-            color: _C.textPrimary,
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
             fontSize: 17,
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: _C.border),
+          child: Container(height: 1, color: AppColors.border),
         ),
         actions: [
           Padding(
@@ -427,8 +415,8 @@ class _AjoutCommandeState extends State<AjoutCommande> {
             child: FilledButton(
               onPressed: _enregistrerCommande,
               style: FilledButton.styleFrom(
-                backgroundColor: _C.accent,
-                foregroundColor: Colors.white,
+                backgroundColor: AppColors.accent,
+                foregroundColor: AppColors.onAccent,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 shape: RoundedRectangleBorder(
@@ -577,13 +565,13 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                               }
                             },
                             style: FilledButton.styleFrom(
-                              backgroundColor: _C.accent,
+                              backgroundColor: AppColors.accent,
                               padding: EdgeInsets.zero,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                             ),
                             child: const Icon(Icons.add_rounded,
-                                color: Colors.white),
+                              color: AppColors.onAccent),
                           ),
                         ),
                       ],
@@ -610,7 +598,7 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                             Text(
                               '${details.length} ligne${details.length > 1 ? 's' : ''}',
                               style: const TextStyle(
-                                  fontSize: 12, color: _C.textSecondary),
+                                  fontSize: 12, color: AppColors.textSecondary),
                             ),
                         ],
                       ),
@@ -618,7 +606,7 @@ class _AjoutCommandeState extends State<AjoutCommande> {
 
                     // Table header
                     Container(
-                      color: _C.tableHeader,
+                      color: AppColors.tableHeader,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 10),
                       child: const Row(
@@ -654,11 +642,11 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(Icons.receipt_long_outlined,
-                                      size: 32, color: _C.border),
+                                      size: 32, color: AppColors.border),
                                   SizedBox(height: 8),
                                   Text('Aucun produit ajouté',
                                       style: TextStyle(
-                                          color: _C.textSecondary,
+                                          color: AppColors.textSecondary,
                                           fontSize: 13)),
                                 ],
                               ),
@@ -667,7 +655,7 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                               padding: EdgeInsets.zero,
                               itemCount: details.length,
                               separatorBuilder: (_, __) => const Divider(
-                                  height: 1, color: _C.border, indent: 16),
+                                  height: 1, color: AppColors.border, indent: 16),
                               itemBuilder: (context, index) {
                                 final detail = details[index];
                                 final montant =
@@ -685,7 +673,7 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                                           overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(
                                               fontSize: 13,
-                                              color: _C.textPrimary),
+                                              color: AppColors.textPrimary),
                                         ),
                                       ),
                                       Expanded(
@@ -695,7 +683,7 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                                           textAlign: TextAlign.center,
                                           style: const TextStyle(
                                               fontSize: 13,
-                                              color: _C.textSecondary),
+                                              color: AppColors.textSecondary),
                                         ),
                                       ),
                                       Expanded(
@@ -705,7 +693,7 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                                           textAlign: TextAlign.right,
                                           style: const TextStyle(
                                               fontSize: 13,
-                                              color: _C.textSecondary),
+                                              color: AppColors.textSecondary),
                                         ),
                                       ),
                                       Expanded(
@@ -716,7 +704,7 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                                           style: const TextStyle(
                                             fontWeight: FontWeight.w600,
                                             fontSize: 13,
-                                            color: _C.textPrimary,
+                                            color: AppColors.textPrimary,
                                           ),
                                         ),
                                       ),
@@ -729,13 +717,13 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                                           children: [
                                             _iconAction(
                                               icon: Icons.edit_outlined,
-                                              color: _C.textSecondary,
+                                              color: AppColors.textSecondary,
                                               onTap: () =>
                                                   _modifierDetail(detail),
                                             ),
                                             _iconAction(
                                               icon: Icons.delete_outline,
-                                              color: _C.danger,
+                                              color: AppColors.danger,
                                               onTap: () =>
                                                   _supprimerDetail(detail),
                                             ),
@@ -752,7 +740,7 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                     // Total row
                     Container(
                       decoration: const BoxDecoration(
-                        border: Border(top: BorderSide(color: _C.border)),
+                        border: Border(top: BorderSide(color: AppColors.border)),
                       ),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 14),
@@ -761,7 +749,7 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                           const Text('Total à payer',
                               style: TextStyle(
                                   fontWeight: FontWeight.w600,
-                                  color: _C.textPrimary,
+                                  color: AppColors.textPrimary,
                                   fontSize: 14)),
                           const Spacer(),
                           Text(
@@ -769,7 +757,7 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                             style: const TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 16,
-                              color: _C.accent,
+                              color: AppColors.accent,
                             ),
                           ),
                         ],
@@ -791,10 +779,10 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                       decoration: _fieldDecor('Type de paiement'),
                       value: selectedType,
                       icon: const Icon(Icons.keyboard_arrow_down_rounded,
-                          color: _C.textSecondary),
+                          color: AppColors.textSecondary),
                       style:
-                          const TextStyle(color: _C.textPrimary, fontSize: 14),
-                      dropdownColor: _C.surface,
+                          const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                      dropdownColor: AppColors.surface,
                       items: types
                           .map((type) => DropdownMenuItem(
                                 value: type['value'],
@@ -825,17 +813,17 @@ class _AjoutCommandeState extends State<AjoutCommande> {
                           title: const Text('Créer un nouveau compte',
                               style: TextStyle(
                                   fontSize: 14,
-                                  color: _C.textPrimary,
+                                  color: AppColors.textPrimary,
                                   fontWeight: FontWeight.w500)),
                           subtitle: Text(
                             comptes.isEmpty
                                 ? 'Ce client n\'a pas encore de compte.'
                                 : 'Activez pour ouvrir un nouveau compte.',
                             style: const TextStyle(
-                                fontSize: 12, color: _C.textSecondary),
+                                fontSize: 12, color: AppColors.textSecondary),
                           ),
                           value: creerNouveauCompteCredit,
-                          activeColor: _C.accent,
+                          activeColor: AppColors.accent,
                           onChanged: (value) {
                             setState(() {
                               creerNouveauCompteCredit = value;
@@ -888,7 +876,7 @@ const _tableHeaderStyle = TextStyle(
   fontSize: 11,
   fontWeight: FontWeight.w700,
   letterSpacing: 0.4,
-  color: _C.textSecondary,
+  color: AppColors.textSecondary,
 );
 
 Widget _card({required Widget child, EdgeInsets? padding}) {
@@ -896,9 +884,9 @@ Widget _card({required Widget child, EdgeInsets? padding}) {
     width: double.infinity,
     padding: padding ?? const EdgeInsets.all(16),
     decoration: BoxDecoration(
-      color: _C.surface,
+      color: AppColors.surface,
       borderRadius: BorderRadius.circular(14),
-      border: Border.all(color: _C.border),
+      border: Border.all(color: AppColors.border),
     ),
     child: child,
   );
@@ -924,16 +912,16 @@ Widget _infoBox(String text) {
     margin: const EdgeInsets.only(top: 4),
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
     decoration: BoxDecoration(
-      color: _C.accentSoft,
+      color: AppColors.accentSoft,
       borderRadius: BorderRadius.circular(8),
     ),
     child: Row(
       children: [
-        const Icon(Icons.info_outline_rounded, size: 15, color: _C.accent),
+        const Icon(Icons.info_outline_rounded, size: 15, color: AppColors.accent),
         const SizedBox(width: 8),
         Expanded(
           child: Text(text,
-              style: const TextStyle(fontSize: 12.5, color: _C.textSecondary)),
+              style: const TextStyle(fontSize: 12.5, color: AppColors.textSecondary)),
         ),
       ],
     ),

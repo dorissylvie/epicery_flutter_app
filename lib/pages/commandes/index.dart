@@ -3,16 +3,7 @@ import 'package:flutter_app/Models/Commande.dart';
 import 'package:flutter_app/services/commande_service.dart';
 import 'package:flutter_app/pages/commandes/AjoutCommande.dart';
 import 'package:flutter_app/pages/commandes/AfficheCommande.dart';
-
-// ── Palette minimaliste ──────────────────────────────────────────────────────
-class _Colors {
-  static const bg = Color(0xFFF7F7F5);
-  static const surface = Color(0xFFFFFFFF);
-  static const ink = Colors.pink;
-  static const muted = Color(0xFF8C8C8C);
-  static const accent = Color.fromARGB(255, 240, 117, 179);
-  static const divider = Color(0xFFEAEAE8);
-}
+import 'package:flutter_app/theme/app_colors.dart';
 
 class CommandePage extends StatefulWidget {
   const CommandePage({super.key});
@@ -46,17 +37,17 @@ class _CommandePageState extends State<CommandePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _Colors.bg,
+      backgroundColor: AppColors.bg,
       // ── AppBar ──────────────────────────────────────────────────────────
       appBar: AppBar(
-        backgroundColor: _Colors.bg,
+        backgroundColor: AppColors.bg,
         elevation: 0,
         scrolledUnderElevation: 0,
         titleSpacing: 24,
         title: const Text(
           'Commandes',
           style: TextStyle(
-            color: _Colors.ink,
+            color: AppColors.ink,
             fontSize: 20,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.4,
@@ -67,10 +58,10 @@ class _CommandePageState extends State<CommandePage> {
             padding: const EdgeInsets.only(right: 16),
             child: IconButton(
               icon: const Icon(Icons.notifications_outlined,
-                  color: _Colors.ink, size: 22),
+                  color: AppColors.ink, size: 22),
               onPressed: () {},
               style: IconButton.styleFrom(
-                backgroundColor: _Colors.surface,
+                backgroundColor: AppColors.surface,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
               ),
@@ -83,14 +74,14 @@ class _CommandePageState extends State<CommandePage> {
       body: _loading
           ? const Center(
               child: CircularProgressIndicator(
-                color: _Colors.ink,
+                color: AppColors.ink,
                 strokeWidth: 1.5,
               ),
             )
           : commandes.isEmpty
               ? _EmptyState(onRefresh: _loadCommandes)
               : RefreshIndicator(
-                  color: _Colors.ink,
+                  color: AppColors.ink,
                   onRefresh: _loadCommandes,
                   child: ListView.separated(
                     padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
@@ -126,9 +117,9 @@ class _CommandePageState extends State<CommandePage> {
                 content: const Text(
                   'Commande ajoutée',
                   style: TextStyle(
-                      color: _Colors.surface, fontWeight: FontWeight.w500),
+                      color: AppColors.surface, fontWeight: FontWeight.w500),
                 ),
-                backgroundColor: _Colors.ink,
+                backgroundColor: AppColors.ink,
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
@@ -163,9 +154,9 @@ class _CommandeCard extends StatelessWidget {
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
         decoration: BoxDecoration(
-          color: _Colors.surface,
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: _Colors.divider, width: 1),
+          border: Border.all(color: AppColors.divider, width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,7 +168,7 @@ class _CommandeCard extends StatelessWidget {
                 Text(
                   '#${commande.id}',
                   style: const TextStyle(
-                    color: _Colors.ink,
+                    color: AppColors.ink,
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -0.2,
@@ -186,7 +177,7 @@ class _CommandeCard extends StatelessWidget {
                 Text(
                   dateStr,
                   style: const TextStyle(
-                    color: _Colors.muted,
+                    color: AppColors.muted,
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                   ),
@@ -195,7 +186,7 @@ class _CommandeCard extends StatelessWidget {
             ),
 
             const SizedBox(height: 12),
-            const Divider(color: _Colors.divider, height: 1),
+            const Divider(color: AppColors.divider, height: 1),
             const SizedBox(height: 12),
 
             // ── Infos principales ────────────────────────────────────────
@@ -252,12 +243,12 @@ class _InfoRow extends StatelessWidget {
       children: [
         Text(label,
             style: const TextStyle(
-                color: _Colors.muted,
+                color: AppColors.muted,
                 fontSize: 12,
                 fontWeight: FontWeight.w400)),
         Text(value,
             style: const TextStyle(
-                color: _Colors.ink, fontSize: 13, fontWeight: FontWeight.w500)),
+                color: AppColors.ink, fontSize: 13, fontWeight: FontWeight.w500)),
       ],
     );
   }
@@ -277,7 +268,7 @@ class _AmountChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: subtle ? _Colors.bg : _Colors.ink,
+        color: subtle ? AppColors.bg : AppColors.ink,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -285,14 +276,14 @@ class _AmountChip extends StatelessWidget {
         children: [
           Text(label,
               style: TextStyle(
-                  color: subtle ? _Colors.muted : Colors.white60,
+                  color: subtle ? AppColors.muted : AppColors.onAccentMuted,
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
                   letterSpacing: 0.4)),
           const SizedBox(height: 2),
           Text('$amount Ar',
               style: TextStyle(
-                  color: subtle ? _Colors.ink : _Colors.surface,
+                  color: subtle ? AppColors.ink : AppColors.surface,
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                   letterSpacing: -0.2)),
@@ -318,28 +309,28 @@ class _EmptyState extends StatelessWidget {
             width: 64,
             height: 64,
             decoration: BoxDecoration(
-              color: _Colors.surface,
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: _Colors.divider),
+              border: Border.all(color: AppColors.divider),
             ),
             child: const Icon(Icons.receipt_long_outlined,
-                color: _Colors.muted, size: 28),
+                color: AppColors.muted, size: 28),
           ),
           const SizedBox(height: 16),
           const Text('Aucune commande',
               style: TextStyle(
-                  color: _Colors.ink,
+                  color: AppColors.ink,
                   fontSize: 16,
                   fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           const Text('Appuyez sur + pour en ajouter une.',
-              style: TextStyle(color: _Colors.muted, fontSize: 13)),
+              style: TextStyle(color: AppColors.muted, fontSize: 13)),
           const SizedBox(height: 20),
           TextButton(
             onPressed: onRefresh,
             child: const Text('Actualiser',
                 style:
-                    TextStyle(color: _Colors.ink, fontWeight: FontWeight.w500)),
+                    TextStyle(color: AppColors.ink, fontWeight: FontWeight.w500)),
           ),
         ],
       ),

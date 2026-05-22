@@ -3,6 +3,7 @@ import 'package:flutter_app/Models/Client.dart';
 import 'package:flutter_app/pages/clients/AfficheClient.dart';
 import 'package:flutter_app/pages/clients/AjoutClient.dart';
 import 'package:flutter_app/services/client_service.dart';
+import 'package:flutter_app/theme/app_colors.dart';
 
 class ClientPage extends StatefulWidget {
   const ClientPage({super.key});
@@ -35,12 +36,13 @@ class _ClientPageState extends State<ClientPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Clients"),
+        backgroundColor: AppColors.bg,
+        title: const Text("Clients", style: TextStyle(color: AppColors.textPrimary)),
         shadowColor: Theme.of(context).colorScheme.shadow,
         actions: [
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.notifications),
+            icon: const Icon(Icons.notifications, color: AppColors.textPrimary),
           ),
         ],
       ),
@@ -66,11 +68,11 @@ class _ClientPageState extends State<ClientPage> {
                 children: [
                   // Avatar avec initiale
                   CircleAvatar(
-                    backgroundColor: Colors.pink,
+                    backgroundColor: AppColors.accent,
                     child: Text(
                       client.nom[0].toUpperCase(),
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.onAccent,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -86,7 +88,7 @@ class _ClientPageState extends State<ClientPage> {
                       ),
                       Text(
                         client.adresse,
-                        style: const TextStyle(color: Colors.grey),
+                        style: const TextStyle(color: AppColors.textSecondary),
                       ),
                     ],
                   ),
@@ -109,7 +111,9 @@ class _ClientPageState extends State<ClientPage> {
             );
           }
         },
-        child: Icon(Icons.add),
+        backgroundColor: AppColors.accent,
+        foregroundColor: AppColors.onAccent,
+        child: const Icon(Icons.add),
       ),
     );
   }

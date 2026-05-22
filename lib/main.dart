@@ -4,6 +4,7 @@ import 'package:flutter_app/pages/clients/index.dart';
 import 'package:flutter_app/pages/commandes/index.dart';
 import 'package:flutter_app/pages/parametres/index.dart';
 import 'package:flutter_app/pages/produits/index.dart';
+import 'package:flutter_app/theme/app_colors.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,12 +19,33 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.pinkAccent),
-        primarySwatch: Colors.pink, // optionnel
-        floatingActionButtonTheme : FloatingActionButtonThemeData(
-          backgroundColor: Colors.pinkAccent.shade100, // ✅ couleur par défaut
-          foregroundColor: Colors.white, // ✅ texte / icônes en blanc
-          elevation: 2, // optionnel
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.accent),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: AppColors.accent,
+          foregroundColor: AppColors.onAccent,
+          elevation: 2,
+        ),
+        navigationBarTheme: NavigationBarThemeData(
+          backgroundColor: AppColors.surface,
+          indicatorColor: AppColors.accentSoft,
+          labelTextStyle: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12);
+            }
+            return const TextStyle(
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w500,
+                fontSize: 12);
+          }),
+          iconTheme: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return const IconThemeData(color: AppColors.textPrimary);
+            }
+            return const IconThemeData(color: AppColors.textSecondary);
+          }),
         ),
         useMaterial3: true,
       ),

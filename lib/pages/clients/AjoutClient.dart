@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/Models/Client.dart';
 import 'package:flutter_app/services/client_service.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:flutter_app/theme/app_colors.dart';
 
 class AjoutClient extends StatefulWidget {
   const AjoutClient({super.key});
@@ -69,8 +70,8 @@ class _AjoutClientState extends State<AjoutClient> {
                 }
               },
               style: TextButton.styleFrom(
-                backgroundColor: Colors.pink.shade200,
-                foregroundColor: Colors.grey.shade800,
+                backgroundColor: AppColors.accent,
+                foregroundColor: AppColors.onAccent,
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),

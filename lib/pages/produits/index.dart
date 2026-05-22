@@ -3,6 +3,7 @@ import 'package:flutter_app/Models/Produit.dart';
 import 'package:flutter_app/pages/produits/AfficheProduit.dart';
 import 'package:flutter_app/services/produit_service.dart';
 import 'package:flutter_app/pages/produits/AjoutProduit.dart';
+import 'package:flutter_app/theme/app_colors.dart';
 
 class ProduitPage extends StatefulWidget {
   const ProduitPage({super.key});
@@ -35,12 +36,16 @@ class _ProduitPageState extends State<ProduitPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Appli name"),
+        backgroundColor: AppColors.bg,
+        title: const Text("Appli name",
+            style: TextStyle(color: AppColors.textPrimary)),
         shadowColor: Theme.of(context).colorScheme.shadow,
         actions: <Widget>[
-          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
+          IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.notifications,
+                  color: AppColors.textPrimary))
         ],
-        backgroundColor: Colors.transparent,
       ),
       body: ListView.builder(
         itemCount: produits.length,
@@ -64,11 +69,11 @@ class _ProduitPageState extends State<ProduitPage> {
                 children: [
                   // Avatar avec initiale
                   CircleAvatar(
-                    backgroundColor: Colors.pink,
+                    backgroundColor: AppColors.accent,
                     child: Text(
                       produit.nomProduit[0].toUpperCase(),
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.onAccent,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -85,7 +90,7 @@ class _ProduitPageState extends State<ProduitPage> {
                       ),
                       Text(
                         produit.prixUnitaire.toString(),
-                        style: const TextStyle(color: Colors.grey),
+                        style: const TextStyle(color: AppColors.textSecondary),
                       ),
                     ],
                   ),
@@ -108,7 +113,9 @@ class _ProduitPageState extends State<ProduitPage> {
             );
           }
         },
-        child: Icon(Icons.add),
+        backgroundColor: AppColors.accent,
+        foregroundColor: AppColors.onAccent,
+        child: const Icon(Icons.add),
       ),
     );
   }

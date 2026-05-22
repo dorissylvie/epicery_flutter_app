@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' ;
 
 import 'package:flutter_app/Models/Produit.dart' ;
 import 'package:flutter_app/services/produit_service.dart';
+import 'package:flutter_app/theme/app_colors.dart';
 
 class AjoutProduit extends StatefulWidget {
   const AjoutProduit({super.key});
@@ -67,8 +68,8 @@ class _AjoutProduitState extends State<AjoutProduit> {
                   }
                 },
                 style:TextButton.styleFrom(
-                  backgroundColor: Colors.pink.shade200,
-                  foregroundColor: Colors.grey.shade800,
+                  backgroundColor: AppColors.accent,
+                  foregroundColor: AppColors.onAccent,
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
